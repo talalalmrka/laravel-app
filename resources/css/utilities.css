@@ -1,0 +1,20 @@
+@utility navbar-transparent-* {
+    background-color: transparent;
+    color: --value(--color-bg-*);
+
+    &.scrolled {
+        background-color: --value(--color-*);
+        @apply shadow-xs;
+    }
+
+    .nav-link,
+    .navbar-brand,
+    .navbar-toggle {
+        color: --alpha(--value(--color-bg-*) / 80%);
+
+        &.active,
+        &:hover {
+            color: --value(--color-bg-*);
+        }
+    }
+}

@@ -1,11 +1,135 @@
 @import 'tailwindcss';
 @import "fadgram-ui";
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/talalalmrka/fgx/resources/views/**/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-poppins: Poppins, sans-serif;
+}
+
+@layer base {
+    body {
+        @apply relative font-poppins antialiased;
+        @apply text-gray-700 dark:text-gray-100;
+        @apply bg-white dark:bg-gray-900;
+    }
+
+    pre {
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        font-family: monospace;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: #333;
+
+    }
+}
+
+@layer components {
+    .iti {
+        display: block !important;
+    }
+
+    .media-drop-zone {
+        @apply relative overflow-hidden;
+        @apply w-36 h-36;
+        @apply bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-800;
+        @apply rounded-lg border-2 border-dashed;
+        @apply border-gray-300 dark:border-gray-600 dark:hover:border-gray-500;
+
+        &.multiple {
+            @apply w-full h-auto;
+        }
+    }
+
+    .media-item-edit {
+        @apply absolute inset-0 items-center justify-center w-8 h-8 m-auto text-white transition-colors bg-primary/70 hover:bg-primary rounded-full cursor-pointer;
+    }
+
+    .media-item-delete {
+        @apply flex items-center justify-center;
+        @apply appearance-none w-5 h-5 text-xs font-semibold rounded-full transition-colors bg-red/70 hover:bg-red text-white absolute top-0 start-0 mt-1.5 ms-1.5 z-40;
+    }
+
+    .media-previews-item {
+        @apply relative flex items-center justify-center w-full h-full;
+        @apply shadow-xs;
+        @apply text-gray-500 bg-gray-100 hover:bg-gray-200;
+        @apply rounded-lg overflow-hidden border border-gray-200 hover:border-gray-300;
+
+        @variant dark {
+            @apply text-gray-400 bg-gray-800 hover:bg-gray-900 border-gray-700 hover:border-gray-800;
+        }
+
+        .media-item-edit,
+        .media-item-delete {
+            @apply hidden;
+        }
+
+        @variant hover {
+
+            .media-item-edit,
+            .media-item-delete {
+                @apply flex;
+            }
+        }
+    }
+
+    .media-previews-container {
+        @apply relative w-full h-full;
+
+        .media-item-edit {
+            @apply hidden;
+        }
+
+        &.multiple {
+            @apply flex flex-wrap p-4 gap-4;
+
+            .media-previews-item {
+                @apply w-32 h-32;
+            }
+        }
+
+        @variant hover {
+            .media-item-edit {
+                @apply flex;
+            }
+        }
+
+    }
+
+    .media-preview {
+        @apply relative flex items-center justify-center;
+
+        img {
+            @apply max-w-full max-h-full;
+        }
+
+        video {
+            @apply w-full max-h-full;
+        }
+    }
+
+    .dashboard-sidebar {
+        .nav-link {
+            @apply pill;
+
+            &.active,
+            &:hover {
+                @apply bg-black/20 text-white transition-colors;
+            }
+        }
+    }
+
+    .start-icon,
+    .end-icon {
+        @apply text-gray-600 dark:text-gray-300;
+    }
+
 }

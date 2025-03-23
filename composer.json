@@ -12,7 +12,10 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "livewire/livewire": "^3.6"
+        "livewire/livewire": "^3.6",
+        "spatie/laravel-medialibrary": "^11.12",
+        "spatie/laravel-permission": "^6.16",
+        "talalalmrka/fgx": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -28,7 +31,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -2,31 +2,25 @@
 
 namespace App\Livewire\Dashboard\Home;
 
-use Livewire\Component;
 use App\Models\User;
-use Illuminate\Validation\Rule;
-use Livewire\WithFileUploads;
-class  Index extends Component
+use Livewire\Attributes\Locked;
+use Livewire\Component;
+class Index extends Component
 {
-  use WithFileUploads;
-  public User $user;
-  public $name = "";
-  public $email = "";
-  public $images = [];
-  public function moun(){
-    $this->user = auth()->user();
-    $this->fill($this->only(['name', 'email']));
-  }
-  
-  public function rules(){
-    return [
-      'name' => ['required', 'string', 'max:255', Rule::unique('users', 'name')->ignore(this->user)],
-      'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore(this->user)],
-      
-      ];
-  }
+    public $title;
+    public function mount()
+    {
+        $this->title = __('Dashboard');
+    }
     public function render()
     {
-        return view('livewire.dashboard.home.index');
+        return view('livewire.dashboard.home.index', [
+            'usersCount' => User::all()->count(),
+            'viewsToday' => '10.7 K',
+            'viewsMonth' => '300.6 K',
+            'viewsAll' => '2.4 M',
+        ])->layout('layouts.dashboard', [
+                    'title' => $this->title,
+                ]);
     }
 }
