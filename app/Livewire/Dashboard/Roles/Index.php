@@ -19,7 +19,7 @@ class Index extends Component
     }
     public function edit(Role $role)
     {
-        $this->redirect(route('dashboard.roles', $role), true);
+        $this->redirect(route('dashboard.roles.edit', $role), true);
     }
     public function delete(Role $role)
     {

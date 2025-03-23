@@ -2,17 +2,14 @@
     'model' => 'files',
     'accept' => 'image/*,.pdf,.doc,.docx',
     'maxSize' => 5, // in MB
-    'maxFiles' => 20,
-    'previews' => [],
+    'maxFiles' => 10,
 ])
 
 <div x-data="fileUpload({
     model: '{{ $model }}',
     accept: '{{ $accept }}',
     maxSize: {{ $maxSize }},
-    maxFiles: {{ $maxFiles }},
-    previews: @js($previews),
-    //previews: $wire.entangle('previews'),
+    maxFiles: {{ $maxFiles }}
 })" x-cloak>
     <div class="border-2 border-dashed rounded-lg p-6 mb-4 relative" @dragover.prevent="dragover = true"
         @dragleave.prevent="dragover = false" @drop.prevent="handleDrop($event)"
@@ -37,32 +34,6 @@
 
     <!-- Upload Queue -->
     <div class="space-y-4">
-        <template x-for="(preview, index) in previews" :key="preview.id">
-            <div class="border rounded-lg p-4">
-                <!-- File Preview -->
-                <div class="flex items-center gap-4 mb-2">
-                    <template x-if="preview.type === 'image'">
-                        <img :src="preview.url" class="w-16 h-16 object-cover rounded">
-                    </template>
-                    <div class="flex-1">
-                        <div class="flex flex-col justify-between items-center">
-                            <span x-text="preview.name"></span>
-                            <span x-text="preview.type"></span>
-                            <span x-text="preview.size"></span>
-                        </div>
-                        <div class="text-sm text-gray-500" x-text="preview.mime_type"></div>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <div class="flex gap-2 justify-end">
-                   <button type="button" class="text-sm px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                        wire:click="deleteMedia(preview.id);">
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </template>
         <template x-for="(file, index) in queue" :key="file.id">
             <div class="border rounded-lg p-4">
                 <!-- File Preview -->
@@ -125,13 +96,11 @@
     <script>
       Alpine.data('fileUpload', (config) => ({
                 queue: [],
-                previews: config.previews ?? [],
                 currentUpload: null,
                 dragover: false,
 
                 init() {
                     // Initialize any necessary event listeners
-                    console.log(this.previews);
                 },
 
                 handleFileSelect(e) {
@@ -198,10 +167,10 @@
                     this.currentUpload = file;
 
                     try {
-                        await $wire.upload(
+                        await $wire.uploadMultiple(
                             `${config.model}.${file.index}`,
-                            file.file,
-                            (uploadedFilename) => {
+                            [file.file],
+                            (uploadedFiles) => {
                                 // Upload success
                                 file.status = 'completed';
                                 this.removeFromQueue(file);

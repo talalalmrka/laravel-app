@@ -5,9 +5,11 @@ namespace App\Livewire\Dashboard\Users;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+  use WithPagination;
     public $title;
     public $selected = [];
     public $action;

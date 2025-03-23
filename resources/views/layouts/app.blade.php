@@ -17,6 +17,8 @@
 
 <body>
     {{ $slot }}
+    <script src="{{asset('assets/eruda/eruda.js')}}"></script>
+<script>eruda.init();</script>
 </body>
 
 </html>

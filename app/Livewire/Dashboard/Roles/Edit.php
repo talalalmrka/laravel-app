@@ -23,7 +23,7 @@ class Edit extends Component
         $this->title = $role->id ? __('Edit role :name', ['name' => $this->name]) : __('Create role');
         $this->role = $role;
         $this->fill($this->role->only(['name', 'guard_name']));
-        $this->permissions = $this->role->getPermissionsIds()->toArray();
+        $this->permissions = $this->role->getPermissionNames()->toArray();
     }
     public function guard_name_options()
     {
@@ -42,7 +42,7 @@ class Edit extends Component
         return $permissions->map(function (Permission $permission) {
             return [
                 'label' => $permission->name,
-                'value' => $permission->id,
+                'value' => $permission->name,
             ];
         })->toArray();
     }
@@ -51,6 +51,8 @@ class Edit extends Component
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($this->role?->id)],
             'guard_name' => ['required', 'string', Rule::in(array_keys(config('auth.guards')))],
+            'permissions' => ['required', 'array'],
+            'permissions.*' => ['required', 'string', Rule::exists('roles', 'name')],
         ];
     }
     public function save()

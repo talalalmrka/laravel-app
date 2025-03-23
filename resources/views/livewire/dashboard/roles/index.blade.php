@@ -34,7 +34,7 @@
                             <td>{{ $role->guard_name }}</td>
                             <td>
                                 @foreach ($role->getPermissionNames() as $permission)
-                                    <span class="badge badge-primary badge-outline pill">{{ $permission }}</span>
+                                    <div class="badge badge-primary badge-outline pill">{{ $permission }}</div>
                                 @endforeach
                             </td>
                             <td>{{ $role->created_at->format('d, M Y') }}</td>

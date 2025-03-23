@@ -22,17 +22,19 @@
         </div>
         <main class="lg:ps-64 min-h-75vh relative">
             <div class="navbar h-14 bg-gray-100 dark:bg-gray-700 sticky top-0">
-                <button class="nav-link md:hidden">
-                    <i class="bi-list"></i>
-                </button>
                 <div class="nav">
-                    <div class="form-control-container hidden sm:flex">
+                  <button class="navbar-brand nav-link md:hidden offcanvas-toggle" data-fg-toggle="offcanvas" data-fg-target="#dashboard-sidebar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+                    </svg>
+                  </button>
+                    <div class="form-control-container hidden ms-3 sm:flex">
                         <input type="search" class="form-control xs pill has-end-icon">
                         <span class="end-icon">
                             <i class="icon bi-search"></i>
                         </span>
                     </div>
-                    <button type="button" class="nav-link sm:hidden">
+                    <button type="button" class="nav-link ms-3 sm:hidden">
                         @icon('bi-search')
                     </button>
                 </div>
@@ -79,7 +81,7 @@
                 </div>
             </div>
 
-            <div class="lg:px-4 py-4">
+            <div class="container px-2 lg:px-4 py-4">
                 <div class="md:flex-space-2 justify-between">
                     <h3 class="text-gray-500 dark:text-white text-2xl">{{ $title }}</h3>
                     @if (isset($actions))

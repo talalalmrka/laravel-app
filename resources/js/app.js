@@ -1,2 +1,4 @@
-//import './bootstrap';
-import "fadgram-ui/helpers";
+import { initFadgramUI } from "fadgram-ui/helpers";
+document.addEventListener('livewire:navigated', () => {
+  initFadgramUI();
+});
