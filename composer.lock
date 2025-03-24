@@ -6192,16 +6192,16 @@
         },
         {
             "name": "talalalmrka/fgx",
-            "version": "1.0.1",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/talalalmrka/fgx.git",
-                "reference": "08c5357a6b2eb849d4e990ac31d21e87f86d1da9"
+                "reference": "e0364ed6de0645a0ce4b7f0687645bbd4b953fc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/talalalmrka/fgx/zipball/08c5357a6b2eb849d4e990ac31d21e87f86d1da9",
-                "reference": "08c5357a6b2eb849d4e990ac31d21e87f86d1da9",
+                "url": "https://api.github.com/repos/talalalmrka/fgx/zipball/e0364ed6de0645a0ce4b7f0687645bbd4b953fc0",
+                "reference": "e0364ed6de0645a0ce4b7f0687645bbd4b953fc0",
                 "shasum": ""
             },
             "require": {
@@ -6252,9 +6252,9 @@
             ],
             "support": {
                 "issues": "https://github.com/talalalmrka/fgx/issues",
-                "source": "https://github.com/talalalmrka/fgx/tree/1.0.1"
+                "source": "https://github.com/talalalmrka/fgx/tree/1.0.4"
             },
-            "time": "2025-03-23T01:34:32+00:00"
+            "time": "2025-03-23T21:59:13+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -7605,16 +7605,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.14",
+            "version": "11.5.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "9d6046153c2893b521784069e6b5249ce7d2acae"
+                "reference": "4b6a4ee654e5e0c5e1f17e2f83c0f4c91dee1f9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9d6046153c2893b521784069e6b5249ce7d2acae",
-                "reference": "9d6046153c2893b521784069e6b5249ce7d2acae",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4b6a4ee654e5e0c5e1f17e2f83c0f4c91dee1f9c",
+                "reference": "4b6a4ee654e5e0c5e1f17e2f83c0f4c91dee1f9c",
                 "shasum": ""
             },
             "require": {
@@ -7686,7 +7686,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.14"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.15"
             },
             "funding": [
                 {
@@ -7702,7 +7702,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-19T13:45:48+00:00"
+            "time": "2025-03-23T16:02:11+00:00"
         },
         {
             "name": "sebastian/cli-parser",

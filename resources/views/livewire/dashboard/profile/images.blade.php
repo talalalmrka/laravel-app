@@ -6,9 +6,9 @@
         <div class="card-body">
             <div class="grid grid-cols-1 gap-4">
                 <div class="col">
-                  <fgx:label for="images" :label="__('Images')"/>
-                    <x-file id="images" model="images" accept="image/*" :previews="$previews"/>
-                  <fgx:error id="images"/>
+                    <fgx:label for="images" :label="__('Images')" />
+                    <x-file id="images" model="images" accept="image/*" :media="$user->getMedia('images')" :files="$images" />
+                    <fgx:error id="images" />
                 </div>
             </div>
         </div>
@@ -20,6 +20,4 @@
             <fgx:status class="alert-soft sm" />
         </div>
     </div>
-    @dump($images)
-    @dump($previews)
 </form>

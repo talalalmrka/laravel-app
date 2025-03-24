@@ -52,7 +52,7 @@ class User extends Authenticatable implements HasMedia
     public function registerMediaCollections(): void
     {
         $this
-            ->addMediaCollection('thumbnail')
+            ->addMediaCollection('avatar')
             ->useFallbackUrl(asset('assets/img/profile.svg'))
             ->useFallbackPath(public_path('/assets/img/profile.svg'))
             ->singleFile()
@@ -73,5 +73,11 @@ class User extends Authenticatable implements HasMedia
         $this
             ->addMediaCollection('files');
 
+    }
+
+    public function getAvatarUrlAttribute($conversionName = null): string
+    {
+        $conversionName = $conversionName ?? '';
+        return $this->getFirstMediaUrl('avatar', $conversionName);
     }
 }
