@@ -38,7 +38,7 @@
     maxSize: {{ $maxSize }},
     maxFiles: {{ $maxFiles }},
     media: @js($media),
-    temporaryFiles: @js($files),
+    //temporaryFiles: @js($files),
 })" x-cloak>
     <div class="border-2 border-dashed rounded-lg p-6 mb-4 relative" @dragover.prevent="dragover = true"
         @dragleave.prevent="dragover = false" @drop.prevent="handleDrop($event)"
@@ -84,7 +84,7 @@
                 <!-- Controls -->
                 <div class="flex gap-2 justify-end">
                     <button type="button" class="text-sm px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                        wire:click="$dispatch('delete-media', mediaItem.id)">
+                        x-on:click="$dispatch('delete-media', {id: mediaItem.id})">
                         Delete
                     </button>
                 </div>
@@ -92,13 +92,13 @@
         </template>
 
         <!-- Temporary -->
-        <template x-for="temporaryFile in temporaryFiles" :key="temporaryFile.name">
+        <template x-for="(temporaryFile, temporaryFileIndex) in temporaryFiles" :key="temporaryFile.name">
             <div class="border rounded-lg p-4 border-blue">
-                <div x-text="'file'"></div>
+                <div x-text="temporaryFile.name"></div>
                 <!-- Controls -->
                 <div class="flex gap-2 justify-end">
                     <button type="button" class="text-sm px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                        x-on:click="console.log(temporaryFile)">
+                        x-on:click="removeTemporary(temporaryFileIndex, temporaryFile.name);">
                         Delete
                     </button>
                 </div>
@@ -244,7 +244,7 @@
 
                 file.status = 'uploading';
                 this.currentUpload = file;
-
+                const t = this;
                 try {
                     await $wire.upload(
                         `${config.model}.${file.index}`,
@@ -254,6 +254,14 @@
                             // Upload success
                             file.status = 'completed';
                             this.removeFromQueue(file);
+                            const newFile = {
+                              ...this.currentUpload,
+                              ...{
+                                name: uploadedFilename,
+                              }
+                            };
+                            console.log(newFile);
+                            this.temporaryFiles.push(newFile);
                             this.currentUpload = null;
                             this.processNext();
                         },
@@ -326,11 +334,8 @@
             },
 
             removeTemporary(index, name) {
-                //$wire.removeUpload(config.model, name, () => this.temporaryFiles.splice(index, 1));
+                $wire.removeUpload(config.model, name, () => this.temporaryFiles.splice(index, 1));
             }
         }));
-        document.addEventListener('alpine:init', () => {
-
-        });
     </script>
 @endscript

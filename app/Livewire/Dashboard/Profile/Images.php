@@ -8,12 +8,13 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Livewire\WithFileUploads;
-
+use App\Traits\WithToast;
 class Images extends Component
 {
-  use WithFileUploads, HasMediaProperties;
+  use WithFileUploads, HasMediaProperties, WithToast;
   #[Locked]
   public User $user;
   #[Validate]
@@ -27,17 +28,19 @@ class Images extends Component
   public function rules()
   {
     return [
-      'images' => ['required', 'array'],
-      'images.*' => ['required', 'image', 'max:4096'],
+      'images' => ['nullable', 'array'],
+      'images.*' => ['nullable', 'image', 'max:4096'],
     ];
   }
   public function save()
   {
     $this->validate();
+    $this->toastSuccess('save in progress');
     try {
       foreach ($this->images as $image) {
         $this->user->addMedia($image)->toMediaCollection('images');
       }
+      $this->reset('images');
       session()->flash('status', __('Saved.'));
     } catch (\Exception $e) {
       $this->addError('status', $e->getMessage());
@@ -47,10 +50,16 @@ class Images extends Component
   {
     return $this->getPreviews($property, $this->user);
   }
-
-  public function deleteMedia(Media $media)
+  #[On('delete-media')]
+  public function onDeleteMedia($id)
   {
-    $delete = $media->delete();
+    try{
+      $this->user->deleteMedia($id);
+      $this->toastSuccess(__('Media deleted'));
+    }catch(\Exception $e){
+      $this->toastError($e->getMessage());
+    }
+    //$delete = $media->delete();
   }
   public function render()
   {

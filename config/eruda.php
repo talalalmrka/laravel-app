@@ -1,4 +1,4 @@
 <?php
 return [
-    'enabled' => env('ERUDA_ENABLED', false),
+    'enabled' => env('ERUDA_ENABLED', true),
 ];

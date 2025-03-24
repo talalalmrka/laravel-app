@@ -17,6 +17,8 @@
                         :active="request()->routeIs(['dashboard.users', 'dashboard.users.*'])" />
                     <x-nav-link wire:navigate icon="bi-person-fill-lock" :href="route('dashboard.roles')" :label="__('Roles')"
                         :active="request()->routeIs(['dashboard.roles', 'dashboard.roles.*'])" />
+                    <x-nav-link wire:navigate icon="bi-key-fill" :href="route('dashboard.permissions')" :label="__('Permissions')"
+                        :active="request()->routeIs(['dashboard.permissions', 'dashboard.permissions.*'])" />
                 </nav>
             </div>
         </div>
@@ -80,12 +82,14 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="container px-2 lg:px-4 py-4">
                 <div class="md:flex-space-2 justify-between">
                     <h3 class="text-gray-500 dark:text-white text-2xl">{{ $title }}</h3>
                     @if (isset($actions))
+                      <div class="flex-space-2 mb-3 md:mb-0">
                         {{ $actions }}
+                      </div>
                     @endif
                 </div>
 
