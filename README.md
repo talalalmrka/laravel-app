@@ -4,8 +4,8 @@ Welcome to the **Fadgram Laravel Starter Kit**! This starter kit is designed to 
 
 ## Tech Stack
 
--   ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white) **Laravel**: A PHP framework for web artisans.
--   ![Livewire](https://img.shields.io/badge/Livewire-4E56A6?style=for-the-badge&logo=livewire&logoColor=white) **Livewire**: A full-stack framework for Laravel.
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Livewire](https://img.shields.io/badge/Livewire-4E56A6?style=for-the-badge&logo=livewire&logoColor=white)
 
 ## Features
 

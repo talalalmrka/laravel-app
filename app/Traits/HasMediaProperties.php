@@ -11,7 +11,10 @@ trait HasMediaProperties
 {
     public function getPreviews($property, $model = null)
     {
-        return MediaPreviewCollection::make($model->getMedia($property), $this->{$property});
+        return MediaPreviewCollection::make(
+            $model->getMedia($property),
+            $this->{$property}
+        );
     }
     /*public function getPreview($property, $index)
     {

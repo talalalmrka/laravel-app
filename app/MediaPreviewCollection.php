@@ -7,7 +7,6 @@ use Illuminate\Http\UploadedFile;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-
 class MediaPreviewCollection extends Collection
 {
     public static function create(...$values)
@@ -24,9 +23,18 @@ class MediaPreviewCollection extends Collection
         foreach ($values as $value) {
             if ($value instanceof MediaPreview) {
                 parent::push($value);
-            } elseif ($value instanceof Media || $value instanceof TemporaryUploadedFile || $value instanceof UploadedFile) {
+            } elseif (
+                $value instanceof Media ||
+                $value instanceof TemporaryUploadedFile ||
+                $value instanceof UploadedFile
+            ) {
                 parent::push(MediaPreview::make($value));
-            } elseif ($value instanceof Collection || $value instanceof MediaCollection || MediaPreview::isTemporaryFiles($value) || MediaPreview::isUploadedFiles($value)) {
+            } elseif (
+                $value instanceof Collection ||
+                $value instanceof MediaCollection ||
+                MediaPreview::isTemporaryFiles($value) ||
+                MediaPreview::isUploadedFiles($value)
+            ) {
                 foreach ($value as $item) {
                     parent::push(MediaPreview::make($item));
                 }
@@ -41,6 +49,10 @@ class MediaPreviewCollection extends Collection
      */
     public function toArray()
     {
-        return $this->map(fn($item) => $item instanceof MediaPreview ? $item->toArray() : $item)->all();
+        return $this->map(
+            fn($item) => $item instanceof MediaPreview
+                ? $item->toArray()
+                : $item
+        )->all();
     }
 }
