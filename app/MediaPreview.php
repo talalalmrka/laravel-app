@@ -19,8 +19,9 @@ class MediaPreview
     public $extension;
     public $size;
     public $icon;
+    public $model_type;
     public $humanReadableSize;
-    protected $fillable = ['id', 'name', 'path', 'url', 'type', 'mime_type', 'extension', 'size', 'icon', 'humanReadableSize'];
+    protected $fillable = ['id', 'name', 'path', 'url', 'type', 'mime_type', 'extension', 'size', 'icon', 'model_type', 'humanReadableSize'];
     public function __construct(
         Media|TemporaryUploadedFile|UploadedFile $media,
         $data = [],
@@ -59,7 +60,7 @@ class MediaPreview
     {
         return match (true) {
             $this->media instanceof Media => $this->media->name,
-            $this->media instanceof TemporaryUploadedFile => $this->media->getClientOriginalName(),
+            $this->media instanceof TemporaryUploadedFile => $this->media->getFilename(),
             $this->media instanceof UploadedFile => $this->media->getClientOriginalName(),
             default => null,
         };
@@ -105,6 +106,15 @@ class MediaPreview
             $this->media instanceof Media => $this->media->size,
             $this->media instanceof TemporaryUploadedFile => $this->media->getSize(),
             $this->media instanceof UploadedFile => $this->media->getSize(),
+            default => null,
+        };
+    }
+    public function getModelType()
+    {
+        return match (true) {
+            $this->media instanceof Media => 'Media',
+            $this->media instanceof TemporaryUploadedFile => 'TemporaryUploadedFile',
+            $this->media instanceof UploadedFile => 'UploadedFile',
             default => null,
         };
     }
@@ -253,21 +263,6 @@ class MediaPreview
         }
         return $iconName;
     }
-    public static function collection($media)
-    {
-        $items = collect([]);
-        if ($media instanceof Media || $media instanceof TemporaryUploadedFile || $media instanceof UploadedFile) {
-            $items->push(self::make($media));
-            //$items->push($media);
-        } elseif ($media instanceof Collection || $media instanceof MediaCollection || self::isTemporaryFiles($media) || self::isUploadedFiles($media)) {
-            foreach ($media as $item) {
-                //$items->push($item);
-                $items->push(self::make($item));
-            }
-        }
-        return $items;
-    }
-
     public static function isTemporaryFiles($media)
     {
         return is_array($media) && collect($media)->every(fn($item) => $item instanceof TemporaryUploadedFile);

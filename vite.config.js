@@ -13,11 +13,11 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
-  server:{
+  /*server:{
     cors: true,
     watch: {
       usePolling: true,
       interval: 5000,
     }
-  }
+  }*/
 });

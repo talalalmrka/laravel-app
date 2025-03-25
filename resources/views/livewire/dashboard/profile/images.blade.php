@@ -7,8 +7,9 @@
             <div class="grid grid-cols-1 gap-4">
                 <div class="col">
                     <fgx:label for="images" :label="__('Images')" />
-                    <x-file id="images" model="images" accept="image/*" :media="$user->getMedia('images')" :files="$images" />
+                    <x-file id="images" model="images" multiple accept="image/*" :previews="$images_previews" />
                     <fgx:error id="images" />
+                    @dump($images_previews)
                 </div>
             </div>
         </div>

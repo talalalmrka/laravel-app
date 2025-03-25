@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard\Profile;
 
+use App\MediaPreviewCollection;
 use App\Models\User;
 use App\Traits\HasMediaProperties;
 use Illuminate\Validation\Rule;
@@ -53,18 +54,20 @@ class Images extends Component
   #[On('delete-media')]
   public function onDeleteMedia($id)
   {
-    try{
+    try {
       $this->user->deleteMedia($id);
+      $this->dispatch('media-deleted', $id);
       $this->toastSuccess(__('Media deleted'));
-    }catch(\Exception $e){
+    } catch (\Exception $e) {
       $this->toastError($e->getMessage());
     }
     //$delete = $media->delete();
   }
   public function render()
   {
+    $previews = MediaPreviewCollection::create($this->user->getMedia('images'))->push($this->images);
     return view('livewire.dashboard.profile.images', [
-      'images_previews' => $this->previews('images'),
+      'images_previews' => $previews,
     ]);
   }
 }

@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits;
 
+use App\MediaPreviewCollection;
 use Exception;
 use App\MediaPreview;
 use Livewire\Attributes\Computed;
@@ -10,22 +11,7 @@ trait HasMediaProperties
 {
     public function getPreviews($property, $model = null)
     {
-        $previews = collect([]);
-        if ($model) {
-            $media = $model->getMedia($property);
-            foreach ($media as $item) {
-                $previews->push($item);
-            }
-        }
-        $files = $this->{$property};
-        if (is_temporary_file($files)) {
-            $previews->push($files);
-        } elseif (is_temporary_files($files)) {
-            foreach ($files as $file) {
-                $previews->push($file);
-            }
-        }
-        return MediaPreview::collection($previews);
+        return MediaPreviewCollection::make($model->getMedia($property), $this->{$property});
     }
     /*public function getPreview($property, $index)
     {
