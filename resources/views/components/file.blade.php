@@ -21,9 +21,8 @@
     accept: '{{ $accept }}',
     maxSize: {{ $maxSize }},
     maxFiles: {{ $maxFiles }},
-    previews: @js($previews ?? []),
 })" x-cloak>
-    @dump('previews', $previews)
+    
     <div class="border-2 border-dashed rounded-lg p-6 mb-4 relative" @dragover.prevent="dragover = true"
         @dragleave.prevent="dragover = false" @drop.prevent="handleDrop($event)"
         :class="dragover ? 'border-blue-500 bg-blue-50' : 'border-gray-300'">
@@ -39,7 +38,7 @@
             <p class="mt-2 text-gray-600">
                 or drag and drop files here
             </p>
-            <p clcla="text-sm text-gray-500">
+            <p class="text-sm text-gray-500">
                 Max size: {{ $maxSize }}MB • Allowed: {{ $accept }}
             </p>
         </div>
@@ -48,34 +47,30 @@
     <!-- Upload Queue -->
     <div :class="{ 'flex items-center flex-wrap p-4 gap-4': @js($multiple), 'w-full h-full': @js(!$multiple) }"
         class="relative group/items">
-
-        <!-- Media -->
-        <template x-for="(preview, index) in previews" :key="preview.id">
+        @foreach($previews as $preview)
             <div
                 class="relative flex items-center justify-center shadow-xs hover:shadow-sm text-gray-500 dark:text-gray-400 bg-gray-100 hover:bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden {{ css_classes(['w-full h-full' => !$multiple, 'w-32 h-32' => $multiple]) }}">
-                <template x-if="preview.type === 'image'">
-                    <img :src="preview.url" class="max-w-full max-h-full;">
-                </template>
-                <template x-if="preview.type !== 'image'">
+                @if($preview->type === 'image')
+                    <img src="{{$preview->url}}" class="max-w-full max-h-full;">
+                @else
                     <div class="flex items-center justify-center w-full h-full">
                         <div class="text-center">
-                            <i class="icon" :class="item.icon"></i>
+                            <i class="icon" :class="$preview->icon"></i>
                             <div class="text-xs mt-2">
-                                <div x-text="preview.name" class="font-semibold"></div>
-                                <div x-text="preview.mime_type" class="mt-1"></div>
-                                <div x-text="preview.humanReadableSize" class="mt-1"></div>
+                                <div class="font-semibold">{{$preview->name}}</div>
+                                <div class="mt-1">{{$preview->mime_type}}</div>
+                                <div class="mt-1">{{$preview->humanReadableSize}}</div>
                             </div>
                         </div>
                     </div>
-                </template>
+                @endif
                 <button type="button"
                     class="absolute top-0 end-0 mt-2 me-2 text-xs text-white bg-red/70 hover:bg-red-600 w-6 h-6 flex items-center justify-center rounded-full"
-                    x-on:fileck="$dispatch('delete-media', {id: mediaItem.id})">
+                    x-on:click="">
                     <i class="icon bi-trash-fill"></i>
                 </button>
             </div>
-        </template>
-
+        @endforeach
         <!-- Queue -->
         <template x-for="(file, index) in queue" :key="file.id">
             <div
@@ -131,19 +126,12 @@
 
 @script
     <script>
+    
         Alpine.data('fileUpload', (config) => ({
             queue: [],
-            previews: config.previews ?? [],
-            temporaryFiles: config.files ?? [],
             currentUpload: null,
             dragover: false,
-
             init() {
-                // Initialize any necessary event listeners
-
-                $nextTick(() => {
-                    console.log('previews', this.previews);
-                });
             },
             handleMediaDeleted() {
                 $wire.on('media-deleted', (event) => {
@@ -192,7 +180,7 @@
                 });
                 console.log('queue', this.queue);
                 if (this.queue.length) {
-                    //this.processNext();
+                    this.processNext();
                 }
             },
 
@@ -232,6 +220,7 @@
                             this.removeFromQueue(file);
                             this.currentUpload = null;
                             this.processNext();
+                            $wire.$refresh();
                         },
                         (error) => {
                             // Upload error
@@ -306,4 +295,5 @@
             }
         }));
     </script>
-@endscript
+    @endscript
+
