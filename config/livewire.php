@@ -64,7 +64,7 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => null,        // Example: 'local', 's3'              | Default: 'default'
+        'disk' => 'uploads',        // Example: 'local', 's3'              | Default: 'default'
         //'rules' => null,       // Example: ['file', 'mimes:png,jpg']  | Default: ['required', 'file', 'max:12288'] (12MB)
         'rules' => ['required', 'file', 'max:65536'], // 64MB
         'directory' => null,   // Example: 'tmp'                      | Default: 'livewire-tmp'
