@@ -1,6 +1,5 @@
 @import 'tailwindcss';
-@import "../../../fadgram-ui";
-@source "../../../fadgram-ui/**/*.css";
+@import "fadgram-ui";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../vendor/talalalmrka/fgx/resources/views/**/*.blade.php';
 @source '../../storage/framework/views/*.php';
