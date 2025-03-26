@@ -55,4 +55,8 @@ class MediaPreviews extends Collection
                 : $item
         )->all();
     }
+    public function keepLast()
+{
+    return new self([$this->last()]);
+}
 }

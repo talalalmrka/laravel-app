@@ -22,6 +22,8 @@ class Images extends Component
   public $images = [];
   #[Validate]
   public $avatar;
+  #[Validate]
+  public $files = [];
   public function mount(User $user)
   {
     $this->user = $user;
@@ -32,6 +34,9 @@ class Images extends Component
     return [
       'images' => ['nullable', 'array'],
       'images.*' => ['nullable', 'image', 'max:4096'],
+      'avatar' => ['nullable', 'image', 'max:4096'],
+      'files' => ['nullable', 'array'],
+      'files.*' => ['nullable', 'file', 'max:4096'],
       'avatar' => ['nullable', 'image', 'max:4096'],
     ];
   }
@@ -44,6 +49,10 @@ class Images extends Component
         $this->user->addMedia($image)->toMediaCollection('images');
       }
       $this->reset('images');
+      foreach ($this->files as $file) {
+        $this->user->addMedia($file)->toMediaCollection('files');
+      }
+      $this->reset('files');
       if($this->avatar){
         $this->user->addMedia($this->pull('avatar'))->toMediaCollection('avatar');
       }
@@ -68,6 +77,7 @@ class Images extends Component
     return view('livewire.dashboard.profile.images', [
       'imagesPreviews' => $this->getPreviews('images', $this->user),
       'avatarPreviews' => $this->getPreviews('avatar', $this->user),
+      'filesPreviews' => $this->getPreviews('files', $this->user),
     ]);
   }
 }

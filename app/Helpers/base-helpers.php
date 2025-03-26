@@ -16,3 +16,9 @@ if (!function_exists('media_previews')) {
         return MediaPreviews::create($values);
     }
 }
+
+if(!function_exists('is_previews')){
+    function is_previews($data){
+        return $data instanceof MediaPreviews;
+    }
+}

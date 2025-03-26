@@ -31,7 +31,7 @@
                 </div>
 
                 <!-- File Input (Hidden) -->
-                <input wire:model.live="avatar" id="avatar" x-ref="fileInput" type="file" class="hidden">
+                <input wire:model.live="avatar" id="avatar" x-ref="fileInput" type="file" class="hidden" accept="image/*">
             </div>
 
             <fgx:error id="avatar" />

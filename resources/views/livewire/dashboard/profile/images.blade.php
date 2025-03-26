@@ -14,8 +14,8 @@
                         wire:key="images" />
                 </div>
                 <div class="col">
-                    <x-file id="files" model="files" :label="__('Files')" accept="image/*" multiple
-                        wire:key="files" />
+                    <x-file id="files" model="files" :label="__('Files')" multiple
+                        wire:key="files" :previews="$filesPreviews"/>
                 </div>
             </div>
         </div>

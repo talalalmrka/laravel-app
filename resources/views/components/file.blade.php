@@ -12,13 +12,17 @@
     'accept' => 'image/*,.pdf,.doc,.docx',
     'maxSize' => 5, // in MB
     'maxFiles' => 20,
-    'previews' => [],
+    'previews' => null,
 ])
 @php
     $multiple = $multiple || $attributes->has('multiple');
     if ($multiple) {
         $atts['multiple'] = '';
     }
+    if(!$multiple && is_previews($previews)){
+        //$previews = $previews->keepLast();
+    }
+    $mediaCount = is_previews($previews) ? $previews->count() : 0;
 @endphp
 <fgx:label :for="$id" :icon="$icon" :label="$label" />
 <div x-data="fileUpload({
@@ -27,6 +31,7 @@
     maxSize: {{ $maxSize }},
     maxFiles: {{ $maxFiles }},
     multiple: @js($multiple),
+    mediaCount: {{$mediaCount}},
 })" id="form-drop-zone-{{ $model }}" class="form-drop-zone"
     :class="{ 'multiple': @js($multiple) }" x-cloak>
     <input
@@ -60,28 +65,30 @@
                 </div>
             </div>
         </template>
-        @foreach ($previews as $preview)
-            <div id="previews-item-{{ $preview->id }}" class="previews-item">
-                @if ($preview->type === 'image')
-                    <img src="{{ $preview->url }}">
-                @else
-                    <div class="flex items-center justify-center w-full h-full">
-                        <div class="text-center">
-                            <i class="icon {{ $preview->icon }}"></i>
-                            <div class="text-xs mt-2">
-                                <div class="font-semibold">{{ $preview->name }}</div>
-                                <div class="mt-1">{{ $preview->mime_type }}</div>
-                                <div class="mt-1">{{ $preview->humanReadableSize }}</div>
+        @if($previews && $previews->isNotEmpty())
+            @foreach ($previews as $preview)
+                <div id="previews-item-{{ $preview->id }}" class="previews-item" :class="{'hidden': @js(!$multiple) && queue.length}">
+                    @if ($preview->type === 'image')
+                        <img src="{{ $preview->url }}">
+                    @else
+                        <div class="flex items-center justify-center w-full h-full">
+                            <div class="text-center">
+                                <i class="icon {{ $preview->icon }}"></i>
+                                <div class="text-xs mt-2">
+                                    <div class="font-semibold">{{ $preview->name }}</div>
+                                    <div class="mt-1">{{ $preview->mime_type }}</div>
+                                    <div class="mt-1">{{ $preview->humanReadableSize }}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endif
-                <button type="button" class="previews-item-delete"
-                    x-on:click="deletePreview(@js($preview))">
-                    <i class="icon bi-trash-fill"></i>
-                </button>
-            </div>
-        @endforeach
+                    @endif
+                    <button type="button" class="previews-item-delete"
+                        x-on:click="deletePreview(@js($preview))">
+                        <i class="icon bi-trash-fill"></i>
+                    </button>
+                </div>
+            @endforeach
+        @endif
         <!-- Queue -->
         <template x-for="(file, index) in queue" :key="file.id">
             <div class="previews-item">
@@ -182,10 +189,11 @@
                 $wire.on('media-deleted', (event) => {
                     const id = event[0].id;
                     $wire.$refresh();
-                    /*const element = document.querySelector(`#previews-item-${id}`);
+                    const element = document.querySelector(`#previews-item-${id}`);
                     if (element) {
+                        console.log(element);
                         element.remove();
-                    }*/
+                    }
                     //console.log('media-deleted', id);
                     //this.media = this.media.filter(mediaItem => mediaItem.id !== id);
                 });
@@ -226,6 +234,7 @@
             },
 
             validateFile(file) {
+                return true;
                 if (file.size > config.maxSize * 1024 * 1024) {
                     alert(`File ${file.name} exceeds maximum size of ${config.maxSize}MB`);
                     return false;
@@ -261,7 +270,7 @@
                             this.removeFromQueue(file);
                             this.currentUpload = null;
                             this.processNext();
-                            $wire.$refresh();
+                            //$wire.$refresh();
                         },
                         (error) => {
                             // Upload error
@@ -338,6 +347,7 @@
                             property: config.model,
                             id: item.id
                         });
+                        $wire.$refresh();
                         break;
                     case 'TemporaryUploadedFile':
                         $wire.removeUpload(config.model, item.name, () => $wire.$refresh());
@@ -354,7 +364,8 @@
                 return container ? container.querySelectorAll('.previews-item') : [];
             },
             hasPreviews() {
-                return this.getPreviews().length > 0;
+                return parseInt(config.mediaCount) + this.queue.length > 0;
+                //return this.getPreviews().length > 0;
             },
             showAppender() {
                 return this.hasPreviews() && this.multiple;
