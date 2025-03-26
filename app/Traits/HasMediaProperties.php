@@ -1,20 +1,19 @@
 <?php
 namespace App\Traits;
 
-use App\MediaPreviewCollection;
-use Exception;
-use App\MediaPreview;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use App\MediaPreviews;
 trait HasMediaProperties
 {
+    use WithToast;
     public function getPreviews($property, $model = null)
     {
-        return MediaPreviewCollection::make(
-            $model->getMedia($property),
-            $this->{$property}
-        );
+        $previews = new MediaPreviews();
+        if($model){
+            $previews->push($model->getMedia($property));
+        }
+        $previews->push($this->{$property});
+        return $previews;
     }
     /*public function getPreview($property, $index)
     {

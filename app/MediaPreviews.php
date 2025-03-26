@@ -7,7 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-class MediaPreviewCollection extends Collection
+class MediaPreviews extends Collection
 {
     public static function create(...$values)
     {

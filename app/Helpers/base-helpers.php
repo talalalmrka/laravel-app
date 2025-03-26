@@ -1,7 +1,7 @@
 <?php
 
 use App\MediaPreview;
-use App\MediaPreviewCollection;
+use App\MediaPreviews;
 
 if (!function_exists('media_preview')) {
     function media_preview($media)
@@ -13,6 +13,6 @@ if (!function_exists('media_preview')) {
 if (!function_exists('media_previews')) {
     function media_previews(...$values)
     {
-        return MediaPreviewCollection::create($values);
+        return MediaPreviews::create($values);
     }
 }

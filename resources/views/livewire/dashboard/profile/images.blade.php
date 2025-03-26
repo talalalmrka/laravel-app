@@ -6,10 +6,16 @@
         <div class="card-body">
             <div class="grid grid-cols-1 gap-4">
                 <div class="col">
-                    <fgx:label for="images" :label="__('Images')" />
-                    <x-file id="images" model="images" multiple accept="image/*" :previews="$images_previews" />
-                    <fgx:error id="images" />
-                    @dump($images_previews)
+                    <x-file id="avatar" model="avatar" :label="__('Avatar')" accept="image/*" :previews="$avatarPreviews"
+                        wire:key="avatar" />
+                </div>
+                <div class="col">
+                    <x-file id="images" model="images" :label="__('Images')" accept="image/*" multiple :previews="$imagesPreviews"
+                        wire:key="images" />
+                </div>
+                <div class="col">
+                    <x-file id="files" model="files" :label="__('Files')" accept="image/*" multiple
+                        wire:key="files" />
                 </div>
             </div>
         </div>

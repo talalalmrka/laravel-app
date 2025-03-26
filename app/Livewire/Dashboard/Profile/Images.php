@@ -20,7 +20,8 @@ class Images extends Component
   public User $user;
   #[Validate]
   public $images = [];
-  //public $previews;
+  #[Validate]
+  public $avatar;
   public function mount(User $user)
   {
     $this->user = $user;
@@ -31,6 +32,7 @@ class Images extends Component
     return [
       'images' => ['nullable', 'array'],
       'images.*' => ['nullable', 'image', 'max:4096'],
+      'avatar' => ['nullable', 'image', 'max:4096'],
     ];
   }
   public function save()
@@ -42,32 +44,30 @@ class Images extends Component
         $this->user->addMedia($image)->toMediaCollection('images');
       }
       $this->reset('images');
+      if($this->avatar){
+        $this->user->addMedia($this->pull('avatar'))->toMediaCollection('avatar');
+      }
       session()->flash('status', __('Saved.'));
     } catch (\Exception $e) {
       $this->addError('status', $e->getMessage());
     }
-  }
-  public function previews($property)
-  {
-    return $this->getPreviews($property, $this->user);
   }
   #[On('delete-media')]
   public function onDeleteMedia($id)
   {
     try {
       $this->user->deleteMedia($id);
-      $this->dispatch('media-deleted', $id);
+      $this->dispatch('media-deleted', ['id' => $id]);
       $this->toastSuccess(__('Media deleted'));
     } catch (\Exception $e) {
       $this->toastError($e->getMessage());
     }
-    //$delete = $media->delete();
   }
   public function render()
   {
-    $previews = MediaPreviewCollection::create($this->user->getMedia('images'))->push($this->images);
     return view('livewire.dashboard.profile.images', [
-      'images_previews' => $previews,
+      'imagesPreviews' => $this->getPreviews('images', $this->user),
+      'avatarPreviews' => $this->getPreviews('avatar', $this->user),
     ]);
   }
 }
