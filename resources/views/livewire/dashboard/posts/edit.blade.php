@@ -18,7 +18,7 @@
                     <div class="col">
                         <fgx:input wire:model.live="name" id="name" :label="__('Name')" autofocus />
                         @if (!empty($post->id))
-                            <a href="{{ $post->permalink }}" target="_blank" class="link flex-space-2 mt-2">
+                            <a href="{{ $post->permalink }}" target="_blank" class="link text-sm flex-space-2 mt-2">
                                 @icon('bi-box-arrow-up-right')
                                 <span>{{ $post->permalink }}</span>
                             </a>
@@ -31,7 +31,7 @@
                         <fgx:textarea wire:model.live="description" id="description" :label="__('Description')" />
                     </div>
                     <div class="col">
-                        <fgx:editor wire:model.live="content" id="content" :label="__('Content')" />
+                        <fgx:editor wire:model.live="content" id="content" :label="__('Content')" :value="$content"/>
                     </div>
                     <div class="col">
                         <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
@@ -41,8 +41,10 @@
             <fgx:status class="mt-4 alert-soft" />
         </div>
 
-        <div class="card card-body w-1/3">
-            <livewire:components.file wire:model="thumbnail" :model="$post" collection="thumbnail" :label="__('Featured image')">
+        <div class="card card-body md:w-1/3">
+            <livewire:components.file wire:model="thumbnail" :model="$post" collection="thumbnail" accept="image/*" :label="__('Featured image')">
+            <fgx:error id="thumbnail"/>
+            @dump($thumbnail)
         </div>
     </div>
 </div>
