@@ -9,6 +9,28 @@ use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
+    public function permissions() {
+        return [
+            'web' => [
+                'manage users',
+                'manage roles',
+                'manage permissions',
+                'manage posts',
+                'manage settings',
+            ],
+        ];
+    }
+    public function roles() {
+        return [
+            'web' => [
+                'admin' => 'all',
+                'editor' => [
+                    'manage posts',
+                ],
+                'member' => [],
+            ],
+        ];
+    }
     /**
      * Run the database seeds.
      */
@@ -16,35 +38,27 @@ class RolesAndPermissionsSeeder extends Seeder
     {
 
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-        $manage_users = Permission::create([
-            'name' => 'manage users',
-            'guard_name' => 'web',
-        ]);
-        $manage_roles = Permission::create([
-            'name' => 'manage roles',
-            'guard_name' => 'web',
-        ]);
-        $manage_permissions = Permission::create([
-            'name' => 'manage permissions',
-            'guard_name' => 'web',
-        ]);
+        foreach($this->permissions() as $guard_name => $permissions){
+            foreach ($permissions as $permission) {
+                Permission::create([
+                    'name' => $permission,
+                    'guard_name' => $guard_name,
+                ]);
+            }
 
-        $admin = Role::create([
-            'name' => 'admin',
-            'guard_name' => 'web',
-        ]);
-        $admin->syncPermissions([$manage_users, $manage_roles, $manage_permissions]);
+        }
+        foreach($this->roles() as $guard_name => $roles){
+            foreach ($roles as $role_name => $permissions) {
+                $role = Role::create([
+                    'name' => $role_name,
+                    'guard_name' => $guard_name,
+                ]);
+                if($role){
+                    $permissions = $permissions === 'all' ? Permission::where('guard_name', $guard_name)->pluck('name')->toArray() : $permissions;
+                    $role->syncPermissions($permissions);
+                }
+            }
 
-        $moderator = Role::create([
-            'name' => 'moderator',
-            'guard_name' => 'web',
-        ]);
-        $moderator->syncPermissions([$manage_users]);
-
-        $member = Role::create([
-            'name' => 'member',
-            'guard_name' => 'web',
-        ]);
-
+        }
     }
 }

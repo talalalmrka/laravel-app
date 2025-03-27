@@ -7,6 +7,9 @@ use App\Livewire\Dashboard\Roles\Index as Roles;
 use App\Livewire\Dashboard\Roles\Edit as EditRole;
 use App\Livewire\Dashboard\Permissions\Index as Permissions;
 use App\Livewire\Dashboard\Permissions\Edit as EditPermission;
+use App\Livewire\Dashboard\Posts\Index as Posts;
+use App\Livewire\Dashboard\Posts\Edit as EditPost;
+
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Dashboard\Users\Index as UsersIndex;
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'verified']], function () {
@@ -29,11 +32,19 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'verified']], fu
     Route::get('edit/{role}', EditRole::class)->name('dashboard.roles.edit');
     Route::get('create', EditRole::class)->name('dashboard.roles.create');
   });
+
   //permissions
   Route::group(['prefix' => 'permissions', 'middleware' => ['can:manage permissions']], function () {
     Route::get('/', Permissions::class)->name('dashboard.permissions');
     Route::get('edit/{permission}', EditPermission::class)->name('dashboard.permissions.edit');
     Route::get('create', EditPermission::class)->name('dashboard.permissions.create');
+  });
+
+  //posts
+  Route::group(['prefix' => 'posts', 'middleware' => ['can:manage posts']], function () {
+    Route::get('/', Posts::class)->name('dashboard.posts');
+    Route::get('edit/{post}', EditPost::class)->name('dashboard.posts.edit');
+    Route::get('create', EditPost::class)->name('dashboard.posts.create');
   });
 
 });

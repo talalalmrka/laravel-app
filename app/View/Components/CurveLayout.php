@@ -11,6 +11,8 @@ class CurveLayout extends AppLayout
     public $title = null;
     public $showTitle = true;
     public $subtitle = null;
+    public $secondSubtitle = null;
+    public $showSecondSubtitle = true;
     public $showSubtitle = true;
     public $description = null;
     public $color = 'primary';
@@ -21,6 +23,8 @@ class CurveLayout extends AppLayout
         $showTitle = true,
         $subtitle = null,
         $showSubtitle = true,
+        $secondSubtitle = null,
+        $showSecondSubtitle = true,
         $description = null,
         $color = 'primary',
         $headerClass = null,
@@ -30,6 +34,8 @@ class CurveLayout extends AppLayout
         $this->showTitle = $showTitle;
         $this->subtitle = $subtitle;
         $this->showSubtitle = $showSubtitle;
+        $this->secondSubtitle = $secondSubtitle;
+        $this->showSecondSubtitle = $showSecondSubtitle;
         $this->description = $description;
         $this->color = $color;
         $this->headerClass = $headerClass;
@@ -46,6 +52,8 @@ class CurveLayout extends AppLayout
             'showTitle' => $this->showTitle,
             'subtitle' => $this->subtitle,
             'showSubtitle' => $this->showSubtitle,
+            'secondSubtitle' => $this->secondSubtitle,
+            'showSecondSubtitle' => $this->showSecondSubtitle,
             'description' => $this->description,
             'color' => $this->color,
             'headerClass' => $this->headerClass,

@@ -10,14 +10,9 @@
     </button>
     <x-app-logo class="navbar-brand" />
     <div class="nav navbar-nav navbar-collapse expand-md">
-        <a href="{{ route('home') }}" class="nav-link">
-            <i class="icon bi-house-fill"></i>
-            <span>{{ __('Home') }}</span>
-        </a>
-        <a href="/design" class="nav-link">
-            <i class="icon bi-palette-fill"></i>
-            <span>{{ __('Design') }}</span>
-        </a>
+        <x-nav-link wire:navigate :href="route('home')" wire:current="active" icon="bi-house-fill" :label="__('Home')" />
+        <x-nav-link wire:navigate :href="route('blog')" wire:current="active" icon="bi-newspaper" :label="__('Blog')" />
+        <x-nav-link wire:navigate href="/design" wire:current="active" icon="bi-palette-fill" :label="__('Design')" />
 
     </div>
     <div class="nav">

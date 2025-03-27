@@ -3,6 +3,8 @@
     'showTitle' => true,
     'subtitle' => null,
     'showSubtitle' => true,
+    'secondSubtitle' => null,
+    'showSecondSubtitle' => true,
     'description' => null,
     'color' => 'primary',
     'headerClass' => null,
@@ -11,7 +13,8 @@
 @php
     $hasTitle = !empty($title) && $showTitle;
     $hasSubtitle = !empty($subtitle) && $showSubtitle;
-    $hasAnyTitle = $hasTitle || $hasSubtitle;
+    $hasSecondSubtitle = !empty($secondSubtitle) && $showSecondSubtitle;
+    $hasAnyTitle = $hasTitle || $hasSubtitle || $hasSecondSubtitle;
     $colors = [
         'primary' => 'text-primary',
         'secondary' => 'text-secondary',
@@ -84,11 +87,14 @@
                 <div class="absolute z-30 flex items-center inset-0 text-white">
                     <div class="container mx-auto px-4">
                         <div class="text-center">
-                            @if ($showTitle)
+                            @if ($hasTitle)
                                 <h1 class="text-4xl font-bold">{{ $title }}</h1>
                             @endif
-                            @if ($showSubtitle)
-                                <h2 class="text-xl">{{ $subtitle }}</h2>
+                            @if ($hasSubtitle)
+                                <div class="text-lg">{!! $subtitle !!}</div>
+                            @endif
+                            @if ($hasSecondSubtitle)
+                                <div class="text-sm">{!! $secondSubtitle !!}</div>
                             @endif
                             <p class="text-lg">{{ $description }}</p>
                         </div>

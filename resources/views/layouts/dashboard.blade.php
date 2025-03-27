@@ -9,27 +9,74 @@
             </div>
             <div class="offcanvas-body">
                 <nav class="nav vertical">
-                    <x-nav-link wire:navigate icon="bi-speedometer" :href="route('dashboard')" :label="__('Dashboard')"
-                        :active="request()->routeIs(['dashboard'])" />
-                    <x-nav-link wire:navigate icon="bi-person-gear" :href="route('dashboard.profile')" :label="__('Profile')"
-                        :active="request()->routeIs('dashboard.profile')" />
-                    <x-nav-link wire:navigate icon="bi-people-fill" :href="route('dashboard.users')" :label="__('Users')"
-                        :active="request()->routeIs(['dashboard.users', 'dashboard.users.*'])" />
-                    <x-nav-link wire:navigate icon="bi-person-fill-lock" :href="route('dashboard.roles')" :label="__('Roles')"
-                        :active="request()->routeIs(['dashboard.roles', 'dashboard.roles.*'])" />
-                    <x-nav-link wire:navigate icon="bi-key-fill" :href="route('dashboard.permissions')" :label="__('Permissions')"
-                        :active="request()->routeIs(['dashboard.permissions', 'dashboard.permissions.*'])" />
+                    <x-nav-link wire:navigate :href="route('dashboard')" wire:current.exact="active" icon="bi-speedometer"
+                        :label="__('Dashboard')" />
+                    <x-nav-link wire:navigate :href="route('dashboard.profile')" wire:current="active" icon="bi-person-gear"
+                        :label="__('Profile')" />
+                    <x-nav-link wire:navigate :href="route('dashboard.users')" wire:current="active" icon="bi-people-fill"
+                        :label="__('Users')" />
+
+                    <div x-cloak x-data="{ open: @js(request()->routeIs(['dashboard.roles', 'dashboard.roles.*', 'dashboard.permissions', 'dashboard.permissions.*'])) }" class="block w-full">
+                        <a href="#!" x-on:click="open = !open"
+                            class="flex-space-2 text-sm w-full px-3 py-2 justify-between">
+                            @icon('bi-person-fill-lock')
+                            <span class="grow text-start">{{ __('Roles & Permissions') }}</span>
+                            <span x-cloak class="flex items-center">
+                                <i x-show="!open" class="icon bi-chevron-down"></i>
+                                <i x-show="open" class="icon bi-chevron-up"></i>
+                            </span>
+                        </a>
+                        <nav x-show="open" class="nav vertical ms-3 px-2 py-3 border-s border-s-white/50">
+                            <x-nav-link wire:navigate :href="route('dashboard.roles')" wire:current="active" icon="bi-person-gear"
+                                :label="__('Roles')" />
+                            <x-nav-link wire:navigate :href="route('dashboard.permissions')" wire:current="active" icon="bi-key-fill"
+                                :label="__('Permissions')" />
+
+                        </nav>
+                    </div>
+
+                    <x-nav-link wire:navigate :href="route('dashboard.posts')" wire:current="active" icon="bi-newspaper"
+                        :label="__('Posts')" />
+
+                    <div x-cloak x-data="{ open: false }" class="block w-full">
+                        <a href="#!" x-on:click="open = !open"
+                            class="flex-space-2 text-sm w-full px-3 py-2 justify-between">
+                            @icon('bi-gear-wide-connected')
+                            <span class="grow text-start">{{ __('Settings') }}</span>
+                            <span x-cloak class="flex items-center">
+                                <i x-show="!open" class="icon bi-chevron-down"></i>
+                                <i x-show="open" class="icon bi-chevron-up"></i>
+                            </span>
+                        </a>
+                        <nav x-show="open" class="nav vertical ms-3 px-2 py-3 border-s border-s-white/50">
+                            <x-nav-link wire:navigate :href="url('dashboard/settings/general')" wire:current="active" icon="bi-globe"
+                                :label="__('General settings')" />
+                            <x-nav-link wire:navigate :href="url('dashboard/settings/membership')" wire:current="active" icon="bi-person-gear"
+                                :label="__('Membership settings')" />
+                            <x-nav-link wire:navigate :href="url('dashboard/settings/ads')" wire:current="active" icon="bi-megaphone"
+                                :label="__('Ads settings')" />
+                            <x-nav-link wire:navigate :href="url('dashboard/settings/typography')" wire:current="active" icon="bi-type"
+                                :label="__('Typography')" />
+                            <x-nav-link wire:navigate :href="url('dashboard/settings/social')" wire:current="active" icon="bi-share"
+                                :label="__('Social networks')" />
+                            <x-nav-link wire:navigate :href="url('dashboard/settings/permalink')" wire:current="active" icon="bi-link"
+                                :label="__('Permalinks')" />
+                        </nav>
+                    </div>
                 </nav>
             </div>
         </div>
         <main class="lg:ps-64 min-h-75vh relative">
             <div class="navbar h-14 bg-gray-100 dark:bg-gray-700 sticky top-0">
                 <div class="nav">
-                  <button class="navbar-brand nav-link md:hidden offcanvas-toggle" data-fg-toggle="offcanvas" data-fg-target="#dashboard-sidebar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
-                    </svg>
-                  </button>
+                    <button class="navbar-brand nav-link md:hidden offcanvas-toggle" data-fg-toggle="offcanvas"
+                        data-fg-target="#dashboard-sidebar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-list" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                        </svg>
+                    </button>
                     <div class="form-control-container hidden ms-3 sm:flex">
                         <input type="search" class="form-control xs pill has-end-icon">
                         <span class="end-icon">
@@ -82,14 +129,14 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="container px-2 lg:px-4 py-4">
                 <div class="md:flex-space-2 justify-between">
                     <h3 class="text-gray-500 dark:text-white text-2xl">{{ $title }}</h3>
                     @if (isset($actions))
-                      <div class="flex-space-2 mb-3 md:mb-0">
-                        {{ $actions }}
-                      </div>
+                        <div class="flex-space-2 mb-3 md:mb-0">
+                            {{ $actions }}
+                        </div>
                     @endif
                 </div>
 

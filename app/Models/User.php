@@ -48,7 +48,9 @@ class User extends Authenticatable implements HasMedia
             'password' => 'hashed',
         ];
     }
-
+    public function posts() {
+        return $this->hasMany(Post::class);
+    }
     public function registerMediaCollections(): void
     {
         $this
