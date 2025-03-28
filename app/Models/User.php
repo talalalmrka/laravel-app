@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
-
+use Illuminate\Support\Facades\DB;
 class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -49,6 +49,19 @@ class User extends Authenticatable implements HasMedia
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            $firstUser = DB::table('users')->orderBy('id')->first();
+
+            if ($firstUser) {
+                // Transfer posts to the first user before deleting
+                \App\Models\Post::where('user_id', $user->id)->update(['user_id' => $firstUser->id]);
+            }
+        });
     }
     public function posts() {
         return $this->hasMany(Post::class);

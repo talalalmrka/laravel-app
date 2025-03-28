@@ -16,7 +16,8 @@
                     <th>{{ __('ID') }}</th>
                     <th>{{ __('Name') }}</th>
                     <th>{{ __('Email') }}</th>
-                    <th>{{ __('Creation data') }}</th>
+                    <th>{{ __('Role') }}</th>
+                    <th>{{ __('Creation date') }}</th>
                     <th>{{ __('Actions') }}</th>
                 </tr>
             </thead>
@@ -29,8 +30,15 @@
                                     name="selected[]" />
                             </td>
                             <td>{{ $user->id }}</td>
-                            <td>{{ $user->name }}</td>
+                            <td>
+                                <div class="flex-space-2">
+                                    <img src="{{ $user->getFirstMediaUrl('avatar') }}"
+                                        class="w-6 h-6 rounded-full object-cover" alt="{{ $user->name }}">
+                                    <div>{{ $user->getMeta('display_name', $user->name) }}</div>
+                                </div>
+                            </td>
                             <td>{{ $user->email }}</td>
+                            <td><span class="badge badge-outline badge-blue">{{ $user->roles()->first()?->name }}</span></td>
                             <td>{{ $user->created_at->format('d, M Y') }}</td>
                             <td>
                                 <div class="flex space-x-2 justify-center">

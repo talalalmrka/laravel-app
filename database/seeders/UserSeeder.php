@@ -20,12 +20,21 @@ class UserSeeder extends Seeder
       $user->assignRole('admin');
     });
     User::factory()->create([
+      'name' => 'editor',
+      'email' => 'editor@gmail.com',
+      'password' => bcrypt(1234),
+    ])->each(function (User $user) {
+      $user->assignRole('editor');
+    });
+    User::factory()->create([
       'name' => 'member',
       'email' => 'member@gmail.com',
       'password' => bcrypt(1234),
     ])->each(function (User $user) {
       $user->assignRole('member');
     });
-    User::factory(28)->create();
+    User::factory(27)->create()->each(function (User $user) {
+      $user->assignRole('member');
+    });
   }
 }
