@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70d4559d8f0a8df5b72fac401335a226",
+    "content-hash": "b562bb076f0085c9064effe9f42ced43",
     "packages": [
         {
             "name": "brick/math",
@@ -2240,6 +2240,76 @@
                 }
             ],
             "time": "2025-01-27T12:07:53+00:00"
+        },
+        {
+            "name": "milwad/laravel-validate",
+            "version": "v1.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/milwad-dev/laravel-validate.git",
+                "reference": "9ef6519ed208515f524f3f37628cbec30df3a9a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/milwad-dev/laravel-validate/zipball/9ef6519ed208515f524f3f37628cbec30df3a9a2",
+                "reference": "9ef6519ed208515f524f3f37628cbec30df3a9a2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "ext-ctype": "*",
+                "laravel/framework": "9.*|10.*|11.*|12.*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "imanghafoori/php-imports-analyzer": "1.0.*",
+                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^9.0|^10.0|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Milwad\\LaravelValidate\\LaravelValidateServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Milwad\\LaravelValidate\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Milwad Khosravi",
+                    "email": "milwad.dev@gmail.com",
+                    "homepage": "https://github.com/milwad-dev",
+                    "role": "Author"
+                }
+            ],
+            "description": "The Laravel-Validate package enhanced Laravel validation capabilities with custom rules and methods for simplified and efficient validation logic.",
+            "homepage": "https://github.com/milwad-dev/laravel-validate",
+            "keywords": [
+                "framework",
+                "larave-validation",
+                "laravel",
+                "laravel package",
+                "laravel validate package",
+                "laravel-validate",
+                "milwad",
+                "regex",
+                "validate",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/milwad-dev/laravel-validate/issues",
+                "source": "https://github.com/milwad-dev/laravel-validate/tree/v1.9.1"
+            },
+            "time": "2025-03-03T16:49:08+00:00"
         },
         {
             "name": "monolog/monolog",

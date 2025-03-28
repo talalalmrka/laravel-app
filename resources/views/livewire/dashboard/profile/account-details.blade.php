@@ -1,5 +1,5 @@
 <form wire:submit="save">
-    <fgx:card>
+    <fgx:card class="h-full">
         <fgx:card-header class="text-primary" icon="bi-key-fill" :title="__('Account details')" />
         <fgx:card-body>
             <div class="grid grid-cols-1 gap-4">

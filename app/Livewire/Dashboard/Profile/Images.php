@@ -13,6 +13,8 @@ use Livewire\Attributes\On;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Livewire\WithFileUploads;
 use App\Traits\WithToast;
+use Livewire\Attributes\Renderless;
+
 class Images extends Component
 {
   use WithFileUploads, HasMediaProperties, WithToast;
@@ -40,33 +42,60 @@ class Images extends Component
       'avatar' => ['nullable', 'image', 'max:4096'],
     ];
   }
+
+  public function saveAvatar() {
+    try{
+      $avatar = $this->pull('avatar');
+      if($avatar){
+        $this->user->addMedia($avatar)->toMediaCollection('avatar');
+      }
+    }catch(\Exception $e){
+        $this->addError('avatar', $e->getMessage());
+    }
+
+  }
+  public function saveImages() {
+    try{
+        $images = $this->pull('images');
+        if($images){
+            foreach ($images as $image) {
+                $this->user->addMedia($image)->toMediaCollection('images');
+            }
+        }
+    }catch(\Exception $e){
+        $this->addError('images', $e->getMessage());
+    }
+
+  }
+  public function saveFiles() {
+    try{
+        $files = $this->pull('files');
+        if($files){
+            foreach ($files as $file) {
+                $this->user->addMedia($file)->toMediaCollection('files');
+            }
+        }
+    }catch(\Exception $e){
+        $this->addError('files', $e->getMessage());
+    }
+
+  }
+  //#[Renderless]
   public function save()
   {
     $this->validate();
-    $this->toastSuccess('save in progress');
-    try {
-      foreach ($this->images as $image) {
-        $this->user->addMedia($image)->toMediaCollection('images');
-      }
-      $this->reset('images');
-      foreach ($this->files as $file) {
-        $this->user->addMedia($file)->toMediaCollection('files');
-      }
-      $this->reset('files');
-      if($this->avatar){
-        $this->user->addMedia($this->pull('avatar'))->toMediaCollection('avatar');
-      }
-      session()->flash('status', __('Saved.'));
-    } catch (\Exception $e) {
-      $this->addError('status', $e->getMessage());
-    }
+    $this->saveAvatar();
+    $this->saveImages();
+    $this->saveFiles();
+    session()->flash('status', __('Saved'));
   }
   #[On('delete-media')]
   public function onDeleteMedia($id)
   {
     try {
       $this->user->deleteMedia($id);
-      $this->dispatch('media-deleted', ['id' => $id]);
+      //$this->dispatch('media-deleted', ['id' => $id]);
+      $this->dispatch('media-deleted', $id);
       $this->toastSuccess(__('Media deleted'));
     } catch (\Exception $e) {
       $this->toastError($e->getMessage());

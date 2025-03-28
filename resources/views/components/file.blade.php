@@ -8,30 +8,35 @@
     'multiple' => false,
     'container_class' => null,
     'container_atts' => [],
-    'model' => 'files',
+    'model' => null,
     'accept' => 'image/*,.pdf,.doc,.docx',
     'maxSize' => 5, // in MB
     'maxFiles' => 20,
-    'previews' => null,
+    'previews' => [],
 ])
 @php
+    $model = $model ?? ($attributes->get('wire:model.live') ?? $attributes->get('wire:model'));
+
     $multiple = $multiple || $attributes->has('multiple');
     if ($multiple) {
         $atts['multiple'] = '';
     }
-    if(!$multiple && is_previews($previews)){
+    $previews = is_previews($previews) ? $previews : media_previews([]);
+    $previewsArray = $previews->toArray();
+    $hasPreviews = $previews->count() > 0;
+    if (!$multiple && is_previews($previews)) {
         //$previews = $previews->keepLast();
     }
     $mediaCount = is_previews($previews) ? $previews->count() : 0;
 @endphp
-<fgx:label :for="$id" :icon="$icon" :label="$label" />
-<div x-data="fileUpload({
+<fgx:label :for="$model" :icon="$icon" :label="$label" />
+<div x-data="formDropZone({
     model: '{{ $model }}',
     accept: '{{ $accept }}',
     maxSize: {{ $maxSize }},
     maxFiles: {{ $maxFiles }},
     multiple: @js($multiple),
-    mediaCount: {{$mediaCount}},
+    previews: @js($previewsArray),
 })" id="form-drop-zone-{{ $model }}" class="form-drop-zone"
     :class="{ 'multiple': @js($multiple) }" x-cloak>
     <input
@@ -48,34 +53,37 @@
                 $atts,
             ),
         ) }}>
+    <div x-show="@js(!$hasPreviews) && !queue.length" x-bind="dragZone" x-ref="dragZone"
+        class="previews-placeholder">
+        <div class="flex flex-col items-center justify-center p-4">
+            @icon('bi-cloud-upload', 'w-8 h-8 mb-1 text-gray-500 dark:text-gray-400')
+            <div class="text-xs text-center text-gray-600 dark:text-gray-400">
+                {{ __('Click or darg here to upload') }}
+            </div>
+            <div class="mt-1 text-xxs text-center text-gray-600 dark:text-gray-400">
+                {{ __('Max size: :max MB • Allowed: :accept', ['max' => $maxSize, 'accept' => $accept]) }}
+            </div>
+        </div>
+    </div>
     <!-- Previews -->
     <div class="previews-grid">
-        <template x-if="!hasPreviews()">
-            <div x-bind="dragZone" x-ref="dragZone"
-                class="flex items-center justify-center w-full h-full cursor-pointer flex-coll">
-                <div class="flex flex-col items-center justify-center p-4">
-                    @icon('bi-cloud-upload', 'w-8 h-8 mb-1 text-gray-500 dark:text-gray-400')
-                    <div class="text-xs text-center text-gray-600 dark:text-gray-400">
-                        {{ __('Click or darg here to upload') }}
-                    </div>
-                    <div class="mt-1 text-xxs text-center text-gray-600 dark:text-gray-400">
-                        {{ __('Max size: :max MB • Allowed: :accept', ['max' => $maxSize, 'accept' => $accept]) }}
-                    </div>
-                    <fgx:info :id="$id" :info="$info" />
-                </div>
-            </div>
-        </template>
-        @if($previews && $previews->isNotEmpty())
+        @if ($previews && $previews->isNotEmpty())
             @foreach ($previews as $preview)
-                <div id="previews-item-{{ $preview->id }}" class="previews-item" :class="{'hidden': @js(!$multiple) && queue.length}">
+                <div id="previews-item-{{ $preview->id }}" class="previews-item"
+                    :class="{ 'abosolute inset-0 z-20': @js(!$multiple) }">
                     @if ($preview->type === 'image')
                         <img src="{{ $preview->url }}">
+                    @elseif($preview->type === 'video')
+                        <video controls>
+                            <source src="{{ $preview->url }}" type="{{ $preview->mime_type }}">
+                            {{ __('Your browser does not support the video tag.') }}
+                        </video>
                     @else
                         <div class="flex items-center justify-center w-full h-full">
                             <div class="text-center">
-                                <i class="icon {{ $preview->icon }}"></i>
-                                <div class="text-xs mt-2">
-                                    <div class="font-semibold">{{ $preview->name }}</div>
+                                <i class="icon w-8 h-8 {{ $preview->icon }}"></i>
+                                <div class="text-xs mt-2 px-1">
+                                    <div class="font-semibold truncate">{{ $preview->name }}</div>
                                     <div class="mt-1">{{ $preview->mime_type }}</div>
                                     <div class="mt-1">{{ $preview->humanReadableSize }}</div>
                                 </div>
@@ -110,23 +118,23 @@
                 <!-- Progress Bar -->
                 <div class="progress absolute w-3/4 top-1/2 -translate-y-1/5 left-1/2 -translate-x-1/2"
                     x-show="file.progress > 0">
-                    <div class="progress-bar" :style="'width: ' + file.progress + '%'"></div>
+                    <div class="progress-bar" :style="'width: ' + file.progress + '%'" x-text="file.progress+'%'"></div>
                 </div>
-                <div class="absolute inset-x-0 bottom-0 flex-space-2 justify-center p-1">
+                <div class="previews-item-toolbar">
                     <template x-if="file.status === 'pending'">
-                        <button type="button" class="btn btn-green xs" x-on:click="startUpload(file)">
+                        <button type="button" class="toolbar-button upload" x-on:click="startUpload(file)">
                             <i class="icon bi-cloud-upload-fill"></i>
                         </button>
                     </template>
 
                     <template x-if="file.status === 'uploading'">
-                        <button type="button" class="btn btn-yellow xs" x-on:click="pauseUpload(file)">
+                        <button type="button" class="toolbar-button pause" x-on:click="pauseUpload(file)">
                             <i class="icon pause-fill"></i>
                         </button>
                     </template>
 
                     <template x-if="file.status === 'paused'">
-                        <button type="button" class="btn btn-blue xs" x-on:click="resumeUpload(file)">
+                        <button type="button" class="toolbar-button resume" x-on:click="resumeUpload(file)">
                             <i class="icon play-fill"></i>
                         </button>
                     </template>
@@ -136,34 +144,34 @@
                 </button>
             </div>
         </template>
-        <template x-if="showAppender()">
-            <div x-bind="appender" class="previews-appender">
-                <div class="text-center">
-                    <i class="icon bi-plus w-8 h-8 text-gray-500 dark:text-gray-400"></i>
-                    <div class="mt-1 text-xs text-center text-gray-500 dark:text-gray-400">
-                        {{ __('Click or drop to upload') }}
-                    </div>
+        <div x-show="@js($multiple) && (@js($hasPreviews) || queue.length)" x-bind="appender"
+            class="previews-appender">
+            <div class="text-center">
+                <i class="icon bi-cloud-upload w-8 h-8 text-gray-500 dark:text-gray-400"></i>
+                <div class="mt-1 text-xs text-center text-gray-500 dark:text-gray-400">
+                    {{ __('Click or drop to upload') }}
                 </div>
             </div>
-        </template>
+        </div>
     </div>
-    <template x-if="showEdit()">
+    <template x-if="@js(!$multiple) && (@js($hasPreviews) || queue.length)">
         <button x-bind="editButton" type="button"
-            class="flex items-center justify-center text-white bg-primary/70 hover:bg-primary text-xs w-8 h-8 rounded-full absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+            class="z-30 flex items-center justify-center text-white bg-primary/70 hover:bg-primary text-xs w-8 h-8 rounded-full absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
             <i class="icon bi-pencil-square"></i>
         </button>
     </template>
 
 </div>
-<fgx:error :id="$id" />
+<fgx:error :id="$model" />
 @script
     <script>
-        Alpine.data('fileUpload', (config) => ({
+        Alpine.data('formDropZone', (config) => ({
             multiple: config.multiple ?? false,
             queue: [],
             currentUpload: null,
             dragover: false,
             container: null,
+            listeners: [],
             dragZone: {
                 ['@dragover.prevent']() {
                     this.dragover = true;
@@ -178,7 +186,7 @@
             appender: {
                 ['@click']() {
                     this.$refs.fileInput.click();
-                },
+                }
             },
             editButton: {
                 ['@click']() {
@@ -194,8 +202,6 @@
                         console.log(element);
                         element.remove();
                     }
-                    //console.log('media-deleted', id);
-                    //this.media = this.media.filter(mediaItem => mediaItem.id !== id);
                 });
             },
             handleFileSelect(e) {
@@ -347,16 +353,15 @@
                             property: config.model,
                             id: item.id
                         });
-                        $wire.$refresh();
+                        //$wire.$refresh();
                         break;
                     case 'TemporaryUploadedFile':
-                        $wire.removeUpload(config.model, item.name, () => $wire.$refresh());
+                        $wire.removeUpload(config.model, item.name, () => {
+                            //$wire.$refresh();
+                        });
                         break;
                 }
 
-            },
-            deleteTemporary(index, name) {
-                $wire.removeUpload(config.model, name, () => this.temporaryFiles.splice(index, 1));
             },
             getPreviews() {
                 const container = document.getElementById(`form-drop-zone-${config.model}`);
@@ -377,9 +382,33 @@
                 return this.hasPreviews() && !this.multiple;
             },
             init() {
-                this.handleMediaDeleted();
-                this.$nextTick(() => {
-
+                this.listeners.push(
+                    Livewire.on('media-deleted', (ids) => {
+                        //console.log(ids);
+                        try {
+                            let elements = 0;
+                            ids.forEach(id => {
+                                //console.log(id);
+                                const element = document.querySelector(`#previews-item-${id}`);
+                                if (element) {
+                                    elements++;
+                                    element.remove();
+                                }
+                            });
+                            if (elements > 0) {
+                                console.log('refresh');
+                                $wire.$refresh();
+                            }
+                        } catch (error) {
+                            console.log('error', error);
+                            //console.error(error);
+                        }
+                    }),
+                );
+            },
+            destroy() {
+                this.listeners.forEach((listener) => {
+                    listener();
                 });
             }
         }));
