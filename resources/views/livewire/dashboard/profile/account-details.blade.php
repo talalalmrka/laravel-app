@@ -1,4 +1,4 @@
-<form wire:submit="save">
+<form wire:submit="save" class="h-full">
     <fgx:card class="h-full">
         <fgx:card-header class="text-primary" icon="bi-key-fill" :title="__('Account details')" />
         <fgx:card-body>

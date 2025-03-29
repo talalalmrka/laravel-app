@@ -86,7 +86,7 @@ class MediaPreview
     public static function fromTemporary(TemporaryUploadedFile $media)
     {
         return new self(
-            uniqid("temp_"),
+            random_int(1000000000, 9999999999),
             $media->getFilename(),
             $media->getRealPath(),
             $media->isPreviewable() ? $media->temporaryUrl() : null,

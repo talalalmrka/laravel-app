@@ -12,26 +12,25 @@
                     <img id="avatar" src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
                         class="w-full h-full rounded-full object-cover">
                     <div x-show="!uploading"
-                        class="hidden group-hover:flex absolute inset-0 items-center justify-center flex-wrap gap-2 bg-black/20 rounded-full">
-                        <button type="button" x-on:click="$refs.fileInput.click()"
-                            class="w-10 h-10 text-white bg-primary/70 hover:bg-primary rounded-full flex items-center justify-center">
-                            @icon('bi-image')
-                        </button>
+                        class="hidden group-hover:flex absolute z-1 inset-0 items-center justify-center flex-wrap gap-2 bg-black/20 rounded-full">
                         <button type="button" wire:click="deleteAvatar"
-                            class="w-10 h-10 text-white bg-red/70 hover:bg-red rounded-full flex items-center justify-center">
+                            class="w-6 h-6 text-xs text-white bg-red/70 hover:bg-red rounded-full flex items-center justify-center">
                             <i class="icon bi-trash-fill" wire:loading.remove wire:target="deleteAvatar"></i>
                             <x-loader wire:loading wire:target="deleteAvatar" />
                         </button>
                     </div>
+                    <button type="button" x-on:click="$refs.fileInput.click()"
+                        class="absolute z-2 bottom-0 start-0 end-0 text-xs h-6 text-white bg-primary/70 hover:bg-primary flex items-center justify-center">
+                        @icon('bi-image')
+                    </button>
                 </div>
-
-                <div class="absolute inset-0 w-full h-full flex items-center justify-center bg-black/50 rounded-full"
-                    x-show="uploading">
-                    <fgx:circular-progress-bar x-data="{ percent: progress }" class="lg light" />
+                <div x-cloak x-show="uploading"
+                    class="progress absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-28">
+                    <div class="progress-bar" :style="'width:' + progress + '%'" x-text="progress+'%'"></div>
                 </div>
-
                 <!-- File Input (Hidden) -->
-                <input wire:model.live="avatar" id="avatar" x-ref="fileInput" type="file" class="hidden" accept="image/*">
+                <input wire:model.live="avatar" id="avatar" x-ref="fileInput" type="file" class="hidden"
+                    accept="image/*">
             </div>
 
             <fgx:error id="avatar" />

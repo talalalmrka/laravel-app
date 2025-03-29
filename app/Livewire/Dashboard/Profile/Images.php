@@ -101,6 +101,9 @@ class Images extends Component
       $this->toastError($e->getMessage());
     }
   }
+  public function loadPreviews($property) {
+    return $this->getPreviews($property, $this->user)->toArray();
+  }
   public function render()
   {
     return view('livewire.dashboard.profile.images', [

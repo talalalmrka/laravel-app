@@ -10,19 +10,20 @@
     'container_atts' => [],
     'model' => null,
     'accept' => 'image/*,.pdf,.doc,.docx',
-    'maxSize' => 5, // in MB
+    'maxSize' => 5,
     'maxFiles' => 20,
     'previews' => [],
 ])
 @php
     $model = $model ?? ($attributes->get('wire:model.live') ?? $attributes->get('wire:model'));
-
+    $zoneId = uniqid();
     $multiple = $multiple || $attributes->has('multiple');
     if ($multiple) {
         $atts['multiple'] = '';
     }
     $previews = is_previews($previews) ? $previews : media_previews([]);
     $previewsArray = $previews->toArray();
+    $previewsArray = is_array($previewsArray) ? $previewsArray : [];
     $hasPreviews = $previews->count() > 0;
     if (!$multiple && is_previews($previews)) {
         //$previews = $previews->keepLast();
@@ -36,7 +37,7 @@
     maxSize: {{ $maxSize }},
     maxFiles: {{ $maxFiles }},
     multiple: @js($multiple),
-    previews: @js($previewsArray),
+    previews: @js(array_values($previewsArray)),
 })" id="form-drop-zone-{{ $model }}" class="form-drop-zone"
     :class="{ 'multiple': @js($multiple) }" x-cloak>
     <input
@@ -53,8 +54,7 @@
                 $atts,
             ),
         ) }}>
-    <div x-show="@js(!$hasPreviews) && !queue.length" x-bind="dragZone" x-ref="dragZone"
-        class="previews-placeholder">
+    <div x-bind="dragZone" x-ref="dragZone" class="previews-placeholder z-1">
         <div class="flex flex-col items-center justify-center p-4">
             @icon('bi-cloud-upload', 'w-8 h-8 mb-1 text-gray-500 dark:text-gray-400')
             <div class="text-xs text-center text-gray-600 dark:text-gray-400">
@@ -67,43 +67,18 @@
     </div>
     <!-- Previews -->
     <div class="previews-grid">
-        @if ($previews && $previews->isNotEmpty())
-            @foreach ($previews as $preview)
-                <div id="previews-item-{{ $preview->id }}" class="previews-item"
-                    :class="{ 'abosolute inset-0 z-20': @js(!$multiple) }">
-                    @if ($preview->type === 'image')
-                        <img src="{{ $preview->url }}">
-                    @elseif($preview->type === 'video')
-                        <video controls>
-                            <source src="{{ $preview->url }}" type="{{ $preview->mime_type }}">
-                            {{ __('Your browser does not support the video tag.') }}
-                        </video>
-                    @else
-                        <div class="flex items-center justify-center w-full h-full">
-                            <div class="text-center">
-                                <i class="icon w-8 h-8 {{ $preview->icon }}"></i>
-                                <div class="text-xs mt-2 px-1">
-                                    <div class="font-semibold truncate">{{ $preview->name }}</div>
-                                    <div class="mt-1">{{ $preview->mime_type }}</div>
-                                    <div class="mt-1">{{ $preview->humanReadableSize }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                    <button type="button" class="previews-item-delete"
-                        x-on:click="deletePreview(@js($preview))">
-                        <i class="icon bi-trash-fill"></i>
-                    </button>
-                </div>
-            @endforeach
-        @endif
+        <template x-for="(item, index) in previews" :key="index">
+            <div x-data="{ item: item }" class="previews-item" x-text="'item'">
+
+            </div>
+        </template>
         <!-- Queue -->
         <template x-for="(file, index) in queue" :key="file.id">
             <div class="previews-item">
-                <template x-if="file.preview">
-                    <img :src="file.preview">
+                <template x-if="file.url">
+                    <img :src="file.url">
                 </template>
-                <template x-if="!file.preview">
+                <template x-if="!file.url">
                     <div class="flex items-center justify-center w-full h-full">
                         <div class="text-center">
                             <i class="icon bi-file"></i>
@@ -144,8 +119,7 @@
                 </button>
             </div>
         </template>
-        <div x-show="@js($multiple) && (@js($hasPreviews) || queue.length)" x-bind="appender"
-            class="previews-appender">
+        <div x-bind="appender" x-ref="appender" class="previews-appender">
             <div class="text-center">
                 <i class="icon bi-cloud-upload w-8 h-8 text-gray-500 dark:text-gray-400"></i>
                 <div class="mt-1 text-xs text-center text-gray-500 dark:text-gray-400">
@@ -154,24 +128,25 @@
             </div>
         </div>
     </div>
-    <template x-if="@js(!$multiple) && (@js($hasPreviews) || queue.length)">
-        <button x-bind="editButton" type="button"
-            class="z-30 flex items-center justify-center text-white bg-primary/70 hover:bg-primary text-xs w-8 h-8 rounded-full absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
-            <i class="icon bi-pencil-square"></i>
-        </button>
-    </template>
-
+    <button x-bind="editButton" x-ref="editButton" type="button"
+        class="previews-edit z-30 flex items-center justify-center text-white bg-primary/70 hover:bg-primary text-xs w-8 h-8 rounded-full absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+        <i class="icon bi-pencil-square"></i>
+    </button>
 </div>
 <fgx:error :id="$model" />
 @script
     <script>
         Alpine.data('formDropZone', (config) => ({
-            multiple: config.multiple ?? false,
+            model: config.model,
+            multiple: config.multiple,
+            hasPreviews: false,
             queue: [],
             currentUpload: null,
             dragover: false,
             container: null,
             listeners: [],
+            previews: config.previews ?? [],
+            //previews: [],
             dragZone: {
                 ['@dragover.prevent']() {
                     this.dragover = true;
@@ -186,7 +161,7 @@
             appender: {
                 ['@click']() {
                     this.$refs.fileInput.click();
-                }
+                },
             },
             editButton: {
                 ['@click']() {
@@ -196,10 +171,10 @@
             handleMediaDeleted() {
                 $wire.on('media-deleted', (event) => {
                     const id = event[0].id;
-                    $wire.$refresh();
+                    //$wire.$refresh();
                     const element = document.querySelector(`#previews-item-${id}`);
                     if (element) {
-                        console.log(element);
+                        // console.log(element);
                         element.remove();
                     }
                 });
@@ -228,10 +203,10 @@
                         file,
                         name: file.name,
                         size: file.size,
-                        preview: file.type.startsWith('image/') ? URL
+                        url: file.type.startsWith('image/') ? URL
                             .createObjectURL(file) : null,
                         progress: 0,
-                        status: 'pending', // pending, uploading, paused, completed, error
+                        status: 'pending',
                         error: null
                     });
                     i++;
@@ -276,7 +251,11 @@
                             this.removeFromQueue(file);
                             this.currentUpload = null;
                             this.processNext();
-                            //$wire.$refresh();
+                            //this.initHasPreviews();
+                            let url = $wire.get(this.model, uploadedFilename)[0];
+                            url = url.replace('livewire-file:', '');
+                            console.log(url);
+                            $wire.$refresh();
                         },
                         (error) => {
                             // Upload error
@@ -320,6 +299,7 @@
                     $wire.cancelUpload(config.model);
                 }
                 this.removeFromQueue(file);
+                this.initHasPreviews();
             },
 
             removeFromQueue(file) {
@@ -346,49 +326,87 @@
                 return file.status.charAt(0).toUpperCase() + file.status.slice(1);
             },
             deletePreview(item) {
-                //console.log(item);
                 switch (item.model_type) {
                     case 'Media':
                         $wire.$dispatch('delete-media', {
                             property: config.model,
                             id: item.id
                         });
-                        //$wire.$refresh();
                         break;
                     case 'TemporaryUploadedFile':
                         $wire.removeUpload(config.model, item.name, () => {
                             //$wire.$refresh();
+                            this.initHasPreviews();
                         });
                         break;
                 }
 
+
             },
             getPreviews() {
                 const container = document.getElementById(`form-drop-zone-${config.model}`);
-                //console.log(container);
                 return container ? container.querySelectorAll('.previews-item') : [];
             },
-            hasPreviews() {
-                return parseInt(config.mediaCount) + this.queue.length > 0;
-                //return this.getPreviews().length > 0;
+            initHasPreviews() {
+                this.multiple = config.multiple;
+                const container = document.getElementById(`form-drop-zone-${config.model}`);
+                //console.log('container', container);
+                const previews = container ? container.querySelectorAll('.previews-item') : [];
+                this.hasPreviews = previews.length > 0;
+                const dragZone = container.querySelector('.previews-placeholder');
+                const appender = container.querySelector('.previews-appender');
+                const editButton = container.querySelector('.previews-edit');
+                //console.log('hasPreviews', this.hasPreviews);
+                if (this.multiple) {
+                    editButton.classList.add('hidden');
+                    if (this.hasPreviews) {
+                        dragZone.classList.add('hidden');
+                        appender.classList.remove('hidden');
+                    } else {
+                        dragZone.classList.remove('hidden');
+                        appender.classList.add('hidden');
+                    }
+                } else {
+                    appender.classList.add('hidden');
+                    if (this.hasPreviews) {
+                        dragZone.classList.add('hidden');
+                        editButton.classList.remove('hidden');
+                    } else {
+                        editButton.classList.add('hidden');
+                        dragZone.classList.remove('hidden');
+
+                    }
+                }
+            },
+            getHasPreviews() {
+                return this.getPreviews().length > 0;
             },
             showAppender() {
-                return this.hasPreviews() && this.multiple;
+                return this.hasPreviews && this.multiple;
             },
             showDragZone() {
-                return !this.hasPreviews();
+                return !this.hasPreviews;
             },
             showEdit() {
-                return this.hasPreviews() && !this.multiple;
+                return this.hasPreviews && !this.multiple;
+            },
+            initAppenders() {
+
             },
             init() {
+                console.log(this.previews);
+                this.$nextTick(() => {
+                    //this.previews = config.previews;
+                });
+                //this.previews = config.previews;
+                //console.log('previews', this.previews);
+                //this.multiple = config.multiple;
+                //this.initHasPreviews();
                 this.listeners.push(
                     Livewire.on('media-deleted', (ids) => {
-                        //console.log(ids);
                         try {
                             let elements = 0;
                             ids.forEach(id => {
-                                //console.log(id);
                                 const element = document.querySelector(`#previews-item-${id}`);
                                 if (element) {
                                     elements++;
@@ -396,9 +414,11 @@
                                 }
                             });
                             if (elements > 0) {
-                                console.log('refresh');
-                                $wire.$refresh();
+
+                                //$wire.$refresh();
+                                this.initHasPreviews();
                             }
+
                         } catch (error) {
                             console.log('error', error);
                             //console.error(error);

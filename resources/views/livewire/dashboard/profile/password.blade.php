@@ -4,12 +4,12 @@
         <fgx:card-body>
             <div class="grid grid-cols-1 gap-4">
                 <div class="col">
-                    <fgx:input type="password" id="password" wire:model.live="password" :label="__('New password')"
-                        startIcon="bi-key" autocomplete="new-password"/>
+                    <fgx:password id="password" wire:model.live="password" :label="__('New password')" startIcon="bi-key"
+                        autocomplete="new-password" />
                 </div>
                 <div class="col">
-                    <fgx:input type="password" id="password_confirmation" wire:model.live="password_confirmation" :label="__('Confirm password')"
-                        startIcon="bi-key" autocomplete="new-password"/>
+                    <fgx:password id="password_confirmation" wire:model.live="password_confirmation"
+                        :label="__('Confirm password')" startIcon="bi-key" autocomplete="new-password" />
                 </div>
             </div>
         </fgx:card-body>
