@@ -22,3 +22,12 @@ if(!function_exists('is_previews')){
         return $data instanceof MediaPreviews;
     }
 }
+
+if (!function_exists('livewire_tmp_url')) {
+    function livewire_tmp_url() {
+        $disk = config('livewire.temporary_file_upload.disk');
+        $directory = config('livewire.temporary_file_upload.directory') ?? 'livewire-tmp';
+        $diskUrl = config("filesystems.disks.{$disk}.url");
+        return "$diskUrl/$directory/";
+    }
+}

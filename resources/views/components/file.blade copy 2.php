@@ -21,20 +21,17 @@
         $atts['multiple'] = '';
     }
     $previewsArray = is_previews($previews) ? $previews->toArray() : [];
-    $tmpUrl = livewire_tmp_url();
-    $error = $errors->has($model) || $errors->has("$model.*");
 @endphp
 <fgx:label :for="$model" :icon="$icon" :label="$label" />
 <div x-data="formDropZone({
-    model: '{{ $model }}',
-    accept: '{{ $accept }}',
-    maxSize: {{ $maxSize }},
-    maxFiles: {{ $maxFiles }},
-    tmpUrl: '{{ $tmpUrl }}',
+    model: @js($model),
+    accept: @js($accept),
+    maxSize: @js($accept),
+    maxFiles: @js($maxFiles),
     multiple: @js($multiple),
     previews: @js($previewsArray),
 })" id="form-drop-zone-{{ $model }}" class="form-drop-zone"
-    :class="{ 'multiple': @js($multiple), 'error': @js($error) }" x-cloak>
+    :class="{ 'multiple': @js($multiple) }" x-cloak>
     <input
         {{ $attributes->merge(
             array_merge(
@@ -49,7 +46,7 @@
                 $atts,
             ),
         ) }}>
-    <label for="{{ $id }}" class="previews-placeholder z-1" x-bind="dragZone">
+    <div x-bind="dragZone" x-ref="dragZone" class="previews-placeholder z-1">
         <div class="flex flex-col items-center justify-center p-4">
             @icon('bi-cloud-upload', 'w-8 h-8 mb-1 text-gray-500 dark:text-gray-400')
             <div class="text-xs text-center text-gray-600 dark:text-gray-400">
@@ -59,31 +56,15 @@
                 {{ __('Max size: :max MB • Allowed: :accept', ['max' => $maxSize, 'accept' => $accept]) }}
             </div>
         </div>
-    </label>
+    </div>
     <!-- Previews -->
-    <div wire:ignore class="previews-grid" x-ref="grid">
-        <template x-for="(file, index) in previews" :key="file.id">
-            <div class="previews-item">
-                <template x-if="file && file.type && file.type === 'image'">
-                    <img :src="file.url">
-                </template>
-                <template x-if="file && file.type && file.type !== 'image'">
-                    <div class="flex items-center justify-center w-full h-full">
-                        <div class="text-center">
-                            <i class="icon" :class="file.icon"></i>
-                            <div class="text-xs mt-2">
-                                <div x-text="file.name" class="font-semibold"></div>
-                                <div x-text="file.mime_type" class="mt-1"></div>
-                                <div x-text="file.humanReadableSize" class="mt-1"></div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-                <button type="button" class="previews-item-delete" x-on:click="deletePreview(file)">
-                    <i class="icon bi-trash-fill"></i>
-                </button>
+    <div class="previews-grid">
+        <template x-for="(item, index) in previews" :key="index">
+            <div x-data="{ item: item }" class="previews-item" x-text="'item'">
+
             </div>
         </template>
+        <!-- Queue -->
         <template x-for="(file, index) in queue" :key="file.id">
             <div class="previews-item">
                 <template x-if="file.url">
@@ -130,7 +111,7 @@
                 </button>
             </div>
         </template>
-        <div x-show="hasItems()" class="previews-appender" x-on:click="$refs.fileInput.click()">
+        <div x-bind="appender" x-ref="appender" class="previews-appender">
             <div class="text-center">
                 <i class="icon bi-cloud-upload w-8 h-8 text-gray-500 dark:text-gray-400"></i>
                 <div class="mt-1 text-xs text-center text-gray-500 dark:text-gray-400">
@@ -143,9 +124,7 @@
         class="previews-edit z-30 flex items-center justify-center text-white bg-primary/70 hover:bg-primary text-xs w-8 h-8 rounded-full absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
         <i class="icon bi-pencil-square"></i>
     </button>
-
 </div>
-@dump($previewsArray)
 <fgx:error :id="$model" />
 @script
     <script>
@@ -162,7 +141,7 @@
             listeners: [],
             previews: config.previews,
             content: '',
-            hasItems() {
+            hasItems(){
                 return this.previews.length > 0 || this.queue.length > 0;
             },
             dragZone: {
@@ -172,26 +151,26 @@
                 ['@dragleave.prevent']() {
                     this.dragover = false;
                 },
-                /*['@click']() {
-                    this.$refs.fileInput.click();
-                },*/
-                ['x-show']() {
-                    return !this.hasItems();
-                }
-            },
-            /*appender: {
                 ['@click']() {
                     this.$refs.fileInput.click();
                 },
-                ['x-show']() {
+                ['x-show'](){
+                    return !this.hasItems();
+                }
+            },
+            appender: {
+                ['@click']() {
+                    this.$refs.fileInput.click();
+                },
+                ['x-show'](){
                     return this.multiple && this.hasItems();
                 }
-            },*/
+            },
             editButton: {
                 ['@click']() {
                     this.$refs.fileInput.click();
                 },
-                ['x-show']() {
+                ['x-show'](){
                     return !this.multiple && this.hasItems();
                 }
             },
@@ -202,19 +181,6 @@
             handleDrop(e) {
                 this.dragover = false;
                 this.addFiles(Array.from(e.dataTransfer.files));
-            },
-            mimeToType(mimeType) {
-                if (mimeType.startsWith("image/")) {
-                    return "image";
-                } else if (mimeType.startsWith("video/")) {
-                    return "video";
-                } else if (mimeType.startsWith("audio/")) {
-                    return "audio";
-                } else if (mimeType.startsWith("application/")) {
-                    return "document";
-                } else {
-                    return 'file';
-                }
             },
             addFiles(files) {
                 let i = 0;
@@ -229,10 +195,7 @@
                         id: Math.random().toString(36).substr(2, 9),
                         file,
                         name: file.name,
-                        type: this.mimeToType(file.type),
-                        mime_type: file.type,
                         size: file.size,
-                        humanReadableSize: this.formatSize(file.size),
                         url: file.type.startsWith('image/') ? URL
                             .createObjectURL(file) : null,
                         progress: 0,
@@ -241,7 +204,6 @@
                     });
                     i++;
                 });
-
                 this.processNext();
             },
 
@@ -265,24 +227,7 @@
 
                 return true;
             },
-            fileToPreview(file, name) {
-                return {
-                    id: Math.random().toString(36).substr(2, 9),
-                    name: name,
-                    path: null,
-                    url: config.tmpUrl + name,
-                    type: this.mimeToType(file.type),
-                    mime_type: file.type,
-                    extension: file.type,
-                    size: file.size,
-                    icon: 'bi-file',
-                    model_type: 'TemporaryUploadedFile',
-                    humanReadableSize: this.formatSize(file.size)
-                };
-            },
-            addUploadedToPreviews(file, name) {
-                this.previews.push(this.fileToPreview(file, name));
-            },
+
             async startUpload(file) {
                 if (this.currentUpload) return;
 
@@ -298,8 +243,12 @@
                             file.status = 'completed';
                             this.removeFromQueue(file);
                             this.currentUpload = null;
-                            this.addUploadedToPreviews(file.file, uploadedFilename);
                             this.processNext();
+                            //this.initHasPreviews();
+                            let url = $wire.get(this.model, uploadedFilename)[0];
+                            url = url.replace('livewire-file:', '');
+                            console.log(url);
+                            $wire.$refresh();
                         },
                         (error) => {
                             // Upload error
@@ -378,205 +327,91 @@
                         });
                         break;
                     case 'TemporaryUploadedFile':
-                        const fileName = item.name;
-                        $wire.removeUpload(config.model, fileName, () => {
-                            //this.previews = this.previews.filter(file => file.name !== fileName);
+                        $wire.removeUpload(config.model, item.name, () => {
+                            //$wire.$refresh();
+                            //this.initHasPreviews();
                         });
                         break;
                 }
+
+
             },
-            appender() {
-                let appender = document.createElement('label');
-                appender.setAttribute('for', this.$refs.fileInput.id);
-                appender.className = 'previews-appender cursor-pointer';
-                appender.innerHTML = `
-                    <div class="text-center">
-                        <i class="icon bi-cloud-upload w-8 h-8 text-gray-500 dark:text-gray-400"></i>
-                        <div class="mt-1 text-xs text-center text-gray-500 dark:text-gray-400">
-                            {{ __('Click or drop to upload') }}
-                        </div>
-                    </div>`;
-                return appender;
+            getPreviews() {
+                const container = document.getElementById(`form-drop-zone-${config.model}`);
+                return container ? container.querySelectorAll('.previews-item') : [];
             },
-            previewItem(preview) {
-                let item = document.createElement('div');
-                item.id = `previews-item-${preview.id}`;
-                item.className = 'previews-item border-green';
-                if (!this.multiple) {
-                    item.classList.add('absolute', 'inset-0', 'z-4');
-                }
-                if (preview.type == 'image') {
-                    let img = document.createElement('img');
-                    img.src = preview.url;
-                    item.appendChild(img);
+            initHasPreviews() {
+                this.multiple = config.multiple;
+                const container = document.getElementById(`form-drop-zone-${config.model}`);
+                //console.log('container', container);
+                const previews = container ? container.querySelectorAll('.previews-item') : [];
+                this.hasPreviews = previews.length > 0;
+                const dragZone = container.querySelector('.previews-placeholder');
+                const appender = container.querySelector('.previews-appender');
+                const editButton = container.querySelector('.previews-edit');
+                //console.log('hasPreviews', this.hasPreviews);
+                if (this.multiple) {
+                    editButton.classList.add('hidden');
+                    if (this.hasPreviews) {
+                        dragZone.classList.add('hidden');
+                        appender.classList.remove('hidden');
+                    } else {
+                        dragZone.classList.remove('hidden');
+                        appender.classList.add('hidden');
+                    }
                 } else {
-                    let details = document.createElement('div');
-                    details.className = 'flex items-center justify-center w-full h-full';
-                    details.innerHTML = `
-                        <div class="text-center">
-                            <i class="icon w-8 h-8 ${preview.icon}"></i>
-                            <div class="text-xs mt-2 px-1">
-                                <div class="font-semibold truncate">${preview.name}</div>
-                                <div class="mt-1">${preview.mime_type}</div>
-                                <div class="mt-1">${preview.humanReadableSize}</div>
-                            </div>
-                        </div>`;
-                    item.appendChild(details);
-                }
-                let button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'previews-item-delete';
-                button.innerHTML = '<i class="icon bi-trash-fill"></i>';
-                button.addEventListener('click', () => {
-                    this.deletePreview(preview);
-                });
-                item.appendChild(button);
-                return item;
-            },
-            buttonUpload(file) {
-                let button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'toolbar-button upload';
-                button.innerHTML = '<i class="icon bi-cloud-upload-fill"></i>';
-                button.addEventListener('click', (evt) => {
-                    evt.preventDefault();
-                    this.startUpload(file);
-                });
-                return button;
-            },
-            buttonPause(file) {
-                let button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'toolbar-button pause';
-                button.innerHTML = '<i class="icon bi-pause-fill"></i>';
-                button.addEventListener('click', (evt) => {
-                    evt.preventDefault();
-                    this.pauseUpload(file);
-                });
-                return button;
-            },
-            buttonResume(file) {
-                let button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'toolbar-button resume';
-                button.innerHTML = '<i class="icon bi-play-fill"></i>';
-                button.addEventListener('click', (evt) => {
-                    evt.preventDefault();
-                    this.resumeUpload(file);
-                });
-                return button;
-            },
-            buttonCancel(file) {
-                let button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'previews-item-delete';
-                button.innerHTML = '<i class="icon bi-trash-fill"></i>';
-                button.addEventListener('click', (evt) => {
-                    evt.preventDefault();
-                    this.cancelUpload(file);
-                });
-                return button;
-            },
-            fileItemProgress(file) {
-                let el = document.createElement('div');
-                el.className = 'progress absolute w-3/4 top-1/2 -translate-y-1/5 left-1/2 -translate-x-1/2';
-                let bar = document.createElement('div');
-                bar.className = 'progress-bar';
-                const percent = `${file.progress}%`;
-                bar.style.width = percent;
-                bar.textContent = percent;
-                el.appendChild(bar);
-                return el;
-            },
-            fileItemToolbar(file) {
-                let toolbar = document.createElement('div');
-                toolbar.className = 'previews-item-toolbar';
-                //upload button
-                if (file.status === 'pending') {
-                    toolbar.appendChild(this.buttonUpload(file));
-                }
-                //pause button
-                if (file.status === 'uploading') {
-                    toolbar.appendChild(this.buttonPause(file));
-                }
-                //resume button
-                if (file.status === 'paused') {
-                    toolbar.appendChild(this.buttonResume(file));
-                }
-                return toolbar;
-            },
-            fileItem(file) {
-                let item = document.createElement('div');
-                item.id = `previews-item-${file.id}`;
-                item.className = 'previews-item border-orange';
-                if (!this.multiple) {
-                    item.classList.add('absolute', 'inset-0', 'z-4');
-                }
-                if (file.url) {
-                    let img = document.createElement('img');
-                    img.src = file.url;
-                    item.appendChild(img);
-                } else {
-                    let details = document.createElement('div');
-                    details.className = 'flex items-center justify-center w-full h-full';
-                    details.innerHTML = `
-                                <div class="text-center">
-                                    <i class="icon w-8 h-8 bi-file"></i>
-                                    <div class="text-xs mt-2 px-1">
-                                        <div class="font-semibold truncate">${file.name}</div>
-                                        <div class="mt-1">${file.type}</div>
-                                        <div class="mt-1">${file.size}</div>
-                                    </div>
-                                </div>`;
-                    item.appendChild(details);
-                }
-                //progress
-                if (file.progress > 0) {
-                    item.appendChild(this.fileItemProgress(file));
-                }
+                    appender.classList.add('hidden');
+                    if (this.hasPreviews) {
+                        dragZone.classList.add('hidden');
+                        editButton.classList.remove('hidden');
+                    } else {
+                        editButton.classList.add('hidden');
+                        dragZone.classList.remove('hidden');
 
-                //toolbar
-                item.appendChild(this.fileItemToolbar(file));
-
-                //cancel button
-                item.appendChild(this.buttonCancel(file));
-                return item;
-            },
-            initContent() {
-                let grid = this.$refs.grid;
-                grid.innerHTML = '';
-                //previews
-                this.previews.forEach(preview => {
-                    grid.appendChild(this.previewItem(preview));
-                });
-
-                //queue
-                this.queue.forEach(file => {
-                    //console.log(this.fileItem(file));
-                    //c += this.fileItem(file);
-                    grid.appendChild(this.fileItem(file));
-                });
-                if (this.multiple && this.hasItems()) {
-                    grid.appendChild(this.appender());
+                    }
                 }
-                //this.content = c;
+            },
+            getHasPreviews() {
+                return this.getPreviews().length > 0;
+            },
+            showAppender() {
+                return this.hasPreviews && this.multiple;
+            },
+            showDragZone() {
+                return !this.hasPreviews;
+            },
+            showEdit() {
+                return this.hasPreviews && !this.multiple;
+            },
+            initAppenders() {
+
             },
             init() {
-                //console.log('init', this.previews);
-                //this.initContent();
-                /*this.$watch('queue', (value) => {
-                    console.log(value);
-                    this.initContent();
-                });*/
-                this.$watch('previews', (value) => {
-                    console.log(value);
-                    this.initContent();
+                console.log(this.previews);
+                this.$nextTick(() => {
+                    //this.previews = config.previews;
                 });
+                //this.previews = config.previews;
+                //console.log('previews', this.previews);
+                //this.multiple = config.multiple;
+                //this.initHasPreviews();
                 this.listeners.push(
                     Livewire.on('media-deleted', (ids) => {
                         try {
-                            this.previews = this.previews.filter(preview => !ids.includes(preview.id));
-                            console.log('previews', this.previews);
+                            let elements = 0;
+                            ids.forEach(id => {
+                                const element = document.querySelector(`#previews-item-${id}`);
+                                if (element) {
+                                    elements++;
+                                    element.remove();
+                                }
+                            });
+                            if (elements > 0) {
+
+                                //$wire.$refresh();
+                                this.initHasPreviews();
+                            }
+
                         } catch (error) {
                             console.log('error', error);
                             //console.error(error);
