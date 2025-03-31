@@ -1,19 +1,58 @@
 <?php
+
 namespace App\Traits;
 
+use Fgx\MediaPreviews;
 use Livewire\Attributes\Computed;
-use App\MediaPreviews;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Renderless;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 trait HasMediaProperties
 {
     use WithToast;
+    #[Computed]
     public function getPreviews($property, $model = null)
     {
-        $previews = new MediaPreviews();
-        if($model){
-            $previews->push($model->getMedia($property));
+        $arr = [];
+
+        //$previews = new MediaPreviews;
+        if ($model) {
+            //$previews->push($model->getMedia($property));
+            $medias = $model->getMedia($property);
+            if ($medias && $medias->isNotEmpty()) {
+                foreach ($medias as $media) {
+                    $arr[] = preview($media)->toArray();
+                }
+            }
         }
-        $previews->push($this->{$property});
-        return $previews;
+        $files = $this->{$property};
+        if (is_temporary_files($files)) {
+            foreach ($files as $file) {
+                $arr[] = preview($file)->toArray();
+            }
+        } elseif (is_temporary_file($files)) {
+            $arr[] = preview($files)->toArray();
+        }
+        return $arr;
+        //$previews->push($this->{$property});
+        //return $previews;
+    }
+    #[On('delete-media')]
+    public function onDeleteMedia($id)
+    {
+        //$this->authorize('edit_profile');
+        try {
+            $delete = Media::destroy($id);
+            if ($delete) {
+                $this->toastSuccess(__('Media deleted'));
+                $this->dispatch('media-deleted', $id);
+            } else {
+                $this->toastError(__('Delete failed :id'));
+            }
+        } catch (\Exception $e) {
+            $this->toastError($e->getMessage());
+        }
     }
     /*public function getPreview($property, $index)
     {

@@ -8,11 +8,18 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/preview.js',
             ],
             refresh: true,
         }),
         tailwindcss(),
     ],
+    server: {
+        watch: {
+            usePolling: true,
+            interval: 1000 // Default is ~100ms; increasing reduces CPU usage
+        }
+    }
     /*server:{
       cors: true,
       watch: {

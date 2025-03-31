@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e2ff0b9818bba6069594d0878582eaa",
+    "content-hash": "82b34c72cbfe7f22bb4d0260e5dba42c",
     "packages": [
         {
             "name": "brick/math",
@@ -6262,17 +6262,11 @@
         },
         {
             "name": "talalalmrka/fgx",
-            "version": "1.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/talalalmrka/fgx.git",
-                "reference": "f5926a1a29c02feeb407545c0e1c58331da15d5e"
-            },
+            "version": "1.0.7",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/talalalmrka/fgx/zipball/f5926a1a29c02feeb407545c0e1c58331da15d5e",
-                "reference": "f5926a1a29c02feeb407545c0e1c58331da15d5e",
-                "shasum": ""
+                "type": "path",
+                "url": "../fgx",
+                "reference": "f5926a1a29c02feeb407545c0e1c58331da15d5e"
             },
             "require": {
                 "laravel/framework": "^8.0|^9.0|^10.0|^11.0|^12.0",
@@ -6292,14 +6286,13 @@
                 }
             },
             "autoload": {
-                "files": [
-                    "src/Helpers/helpers.php"
-                ],
                 "psr-4": {
                     "Fgx\\": "src/"
-                }
+                },
+                "files": [
+                    "src/Helpers/helpers.php"
+                ]
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -6318,11 +6311,9 @@
                 "livewire",
                 "ui"
             ],
-            "support": {
-                "issues": "https://github.com/talalalmrka/fgx/issues",
-                "source": "https://github.com/talalalmrka/fgx/tree/1.0.6"
-            },
-            "time": "2025-03-28T23:22:45+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

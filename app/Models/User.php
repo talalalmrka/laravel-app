@@ -92,9 +92,17 @@ class User extends Authenticatable implements HasMedia
 
     }
 
-    public function getAvatarUrlAttribute($conversionName = null): string
+    public function getAvatarUrl($conversionName = null): string
     {
         $conversionName = $conversionName ?? '';
         return $this->getFirstMediaUrl('avatar', $conversionName);
+    }
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->getAvatarUrl('sm');
+    }
+
+    public function getDisplayNameAttribute() {
+        return $this->getMeta('display_name', $this->name);
     }
 }
