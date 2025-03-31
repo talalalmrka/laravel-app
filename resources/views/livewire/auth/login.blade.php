@@ -5,7 +5,7 @@
                 autocomplete="email" :placeholder="__('Email')" startIcon="bi-envelope-fill" />
         </div>
         <div class="col">
-            <fgx:input type="password" wire:model.live="password" id="password" class="pill" :label="__('Password')"
+            <fgx:password wire:model.live="password" id="password" class="pill" :label="__('Password')"
                 autofocus autocomplete="password" :placeholder="__('Password')" startIcon="bi-key-fill" />
         </div>
         <div class="col">

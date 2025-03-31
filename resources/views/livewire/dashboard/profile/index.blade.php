@@ -32,11 +32,10 @@
         </div>
     </div>
     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="col">
-            <livewire:dashboard.profile.images :user="$user" wire:key="images" />
-        </div>
-        <div class="col">
-            col
-        </div>
+        @can('manage users')
+            <div class="col">
+                <livewire:dashboard.profile.admin :user="$user" wire:key="admin" />
+            </div>
+        @endcan
     </div>
 </div>

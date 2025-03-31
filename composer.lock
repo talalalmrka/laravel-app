@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "82b34c72cbfe7f22bb4d0260e5dba42c",
+    "content-hash": "4e2ff0b9818bba6069594d0878582eaa",
     "packages": [
         {
             "name": "brick/math",
@@ -1137,16 +1137,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.3.0",
+            "version": "v12.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ca0412e978f78ecea0cafbe34dd8b18010064f73"
+                "reference": "cdefd852ecb459a65392cd6ccb578c92a15b8e2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ca0412e978f78ecea0cafbe34dd8b18010064f73",
-                "reference": "ca0412e978f78ecea0cafbe34dd8b18010064f73",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/cdefd852ecb459a65392cd6ccb578c92a15b8e2b",
+                "reference": "cdefd852ecb459a65392cd6ccb578c92a15b8e2b",
                 "shasum": ""
             },
             "require": {
@@ -1348,7 +1348,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-03-18T13:49:19+00:00"
+            "time": "2025-03-30T16:27:26+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -2584,16 +2584,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v4.0.5",
+            "version": "v4.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "736c567e257dbe0fcf6ce81b4d6dbe05c6899f96"
+                "reference": "ce708655043c7050eb050df361c5e313cf708309"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/736c567e257dbe0fcf6ce81b4d6dbe05c6899f96",
-                "reference": "736c567e257dbe0fcf6ce81b4d6dbe05c6899f96",
+                "url": "https://api.github.com/repos/nette/utils/zipball/ce708655043c7050eb050df361c5e313cf708309",
+                "reference": "ce708655043c7050eb050df361c5e313cf708309",
                 "shasum": ""
             },
             "require": {
@@ -2664,9 +2664,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.0.5"
+                "source": "https://github.com/nette/utils/tree/v4.0.6"
             },
-            "time": "2024-08-07T15:39:19+00:00"
+            "time": "2025-03-30T21:06:30+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -3721,16 +3721,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "11.12.8",
+            "version": "11.12.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "98d6d26e56d9ea01f757a4307ef03cb4ae563e0d"
+                "reference": "2435e90009c36906c33668d26c96c86acdb39af7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/98d6d26e56d9ea01f757a4307ef03cb4ae563e0d",
-                "reference": "98d6d26e56d9ea01f757a4307ef03cb4ae563e0d",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/2435e90009c36906c33668d26c96c86acdb39af7",
+                "reference": "2435e90009c36906c33668d26c96c86acdb39af7",
                 "shasum": ""
             },
             "require": {
@@ -3814,7 +3814,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.12.8"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.12.9"
             },
             "funding": [
                 {
@@ -3826,7 +3826,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-21T09:15:22+00:00"
+            "time": "2025-03-31T07:55:00+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -6262,11 +6262,17 @@
         },
         {
             "name": "talalalmrka/fgx",
-            "version": "1.0.7",
+            "version": "1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/talalalmrka/fgx.git",
+                "reference": "151458b287e677e7e18f8ac8e794165545086c8d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../fgx",
-                "reference": "f5926a1a29c02feeb407545c0e1c58331da15d5e"
+                "type": "zip",
+                "url": "https://api.github.com/repos/talalalmrka/fgx/zipball/151458b287e677e7e18f8ac8e794165545086c8d",
+                "reference": "151458b287e677e7e18f8ac8e794165545086c8d",
+                "shasum": ""
             },
             "require": {
                 "laravel/framework": "^8.0|^9.0|^10.0|^11.0|^12.0",
@@ -6286,13 +6292,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Fgx\\": "src/"
-                },
                 "files": [
                     "src/Helpers/helpers.php"
-                ]
+                ],
+                "psr-4": {
+                    "Fgx\\": "src/"
+                }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -6311,9 +6318,11 @@
                 "livewire",
                 "ui"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/talalalmrka/fgx/issues",
+                "source": "https://github.com/talalalmrka/fgx/tree/1.0.8"
+            },
+            "time": "2025-03-31T20:44:09+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -8874,6 +8883,6 @@
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
