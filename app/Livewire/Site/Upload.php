@@ -6,10 +6,8 @@ use App\Models\User;
 use App\Traits\HasMediaProperties;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
-use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 use App\Traits\WithToast;
-use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
 class Upload extends Component
@@ -38,7 +36,8 @@ class Upload extends Component
             'files.*' => ['nullable', 'file', 'max:100000'],
         ];
     }
-    public function saveAvatar() {
+    public function saveAvatar()
+    {
         try {
             $avatar = $this->pull('avatar');
             if ($avatar) {
@@ -49,7 +48,8 @@ class Upload extends Component
             $this->addError('avatar', $e->getMessage());
         }
     }
-    public function saveImages() {
+    public function saveImages()
+    {
         try {
             $images = $this->pull('images');
             if ($images) {
@@ -62,7 +62,8 @@ class Upload extends Component
             $this->addError('images', $e->getMessage());
         }
     }
-    public function saveFiles() {
+    public function saveFiles()
+    {
         try {
             $files = $this->pull('files');
             if ($files) {
@@ -91,9 +92,11 @@ class Upload extends Component
     public function render()
     {
         return view('livewire.site.upload', [
-            'avatarPreviews' => $this->getPreviews('avatar', $this->user),
-            'imagesPreviews' => $this->getPreviews('images', $this->user),
-            'filesPreviews' => $this->getPreviews('files', $this->user),
+            'avatarPreviews' => previews($this->user->getMedia('avatar'), $this->avatar)->toArray(),
+            'imagesPreviews' => previews($this->user->getMedia('images'), $this->images)->toArray(),
+            'filesPreviews' => previews($this->user->getMedia('files'), $this->files)->toArray(),
+        ])->layout('layouts.dashboard', [
+            'title' => __('Upload'),
         ]);
     }
 }

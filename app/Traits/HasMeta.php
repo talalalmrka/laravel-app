@@ -29,9 +29,10 @@ trait HasMeta
         $meta->value = $value;
         return $meta->save();
     }
-    public function getMetas(...$keys) {
-        if(!is_array($keys)){
-            $keys = [$keys];
+    public function getMetas(...$keys)
+    {
+        if (count($keys) === 1 && is_array($keys[0])) {
+            $keys = $keys[0];
         }
         $metas = [];
         foreach ($keys as $key) {

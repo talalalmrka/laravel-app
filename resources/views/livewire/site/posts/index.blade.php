@@ -1,4 +1,4 @@
-<div>
+<div class="container py-6">
     @if ($posts && $posts->isNotEmpty())
         <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4">
             @foreach ($posts as $post)

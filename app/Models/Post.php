@@ -2,20 +2,23 @@
 
 namespace App\Models;
 
+use App\Traits\HasMeta;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Traits\HasThumbnail;
 use Illuminate\Support\Str;
+
 class Post extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasThumbnail;
+    use HasFactory, InteractsWithMedia, HasThumbnail, HasMeta;
     protected $fillable = [
         'user_id',
         'name',
         'slug',
-        'description',
+        'type',
+        'status',
         'content',
     ];
     protected $appends = [
@@ -27,7 +30,7 @@ class Post extends Model implements HasMedia
     }
     public function getPermalinkAttribute()
     {
-        return route('post', $this);
+        return !empty($this->id) ? route('post', $this) : null;
     }
     public function getAuthorNameAttribute()
     {
@@ -41,12 +44,12 @@ class Post extends Model implements HasMedia
     {
         $this->registerThumbnail();
         $this->addMediaCollection('images')
-        ->acceptsMimeTypes([
-            'image/jpeg',
-        'image/png',
-        'image/webp',
-        'image/gif'
-        ]);
+            ->acceptsMimeTypes([
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/gif'
+            ]);
     }
     public static function generateSlug($name, $separator = '-', $language = 'en', $dictionary = ['@' => 'at']): string
     {

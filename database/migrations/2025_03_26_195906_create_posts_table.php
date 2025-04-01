@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
             $table->string('slug')->unique();
-            $table->text('seo_title')->nullable();
-            $table->text('description')->nullable();
+            $table->string('type')->nullable()->default('post');
+            $table->string('status')->nullable()->default('draft');
             $table->longText('content')->nullable();
             $table->timestamps();
         });

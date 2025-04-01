@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Components;
 
-use App\MediaPreviews;
+use Fgx\Previews;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+
 class File extends Component
 {
     use WithFileUploads;
@@ -30,7 +31,7 @@ class File extends Component
     public function render()
     {
         return view('livewire.components.file', [
-            'previews' => MediaPreviews::create($this->model->getMedia($this->collection), $this->files),
+            'previews' => Previews::create($this->model->getMedia($this->collection), $this->files),
         ]);
     }
 }

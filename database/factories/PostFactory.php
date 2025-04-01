@@ -28,7 +28,8 @@ class PostFactory extends Factory
             'user_id' => $this->randomUserId(),
             'name' => $name,
             'slug' => Post::generateSlug($name),
-            'description' => $this->faker->sentence(10, true),
+            'type' => $this->faker->randomElement(['post', 'page']),
+            'status' => $this->faker->randomElement(['draft', 'publish', 'trash']),
             'content' => $this->faker->paragraphs(5, true),
         ];
     }

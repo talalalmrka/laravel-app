@@ -23,8 +23,8 @@ class Index extends Component
     }
     public function render()
     {
-        return view('livewire.dashboard.posts.index',[
-            'posts' => Post::paginate(),
+        return view('livewire.dashboard.posts.index', [
+            'posts' => Post::where('type', 'post')->paginate(),
         ])->layout('layouts.dashboard', [
             'title' => __('Posts'),
         ]);
