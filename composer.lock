@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "91b00463d73f0d870a75d33b0f9a0184",
+    "content-hash": "b562bb076f0085c9064effe9f42ced43",
     "packages": [
         {
             "name": "brick/math",
@@ -6262,11 +6262,17 @@
         },
         {
             "name": "talalalmrka/fgx",
-            "version": "1.0.8",
+            "version": "1.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/talalalmrka/fgx.git",
+                "reference": "2a18d183a7eec5b5f01815996b80aff7f20a0e65"
+            },
             "dist": {
-                "type": "path",
-                "url": "../fgx",
-                "reference": "151458b287e677e7e18f8ac8e794165545086c8d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/talalalmrka/fgx/zipball/2a18d183a7eec5b5f01815996b80aff7f20a0e65",
+                "reference": "2a18d183a7eec5b5f01815996b80aff7f20a0e65",
+                "shasum": ""
             },
             "require": {
                 "laravel/framework": "^8.0|^9.0|^10.0|^11.0|^12.0",
@@ -6286,13 +6292,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Fgx\\": "src/"
-                },
                 "files": [
                     "src/Helpers/helpers.php"
-                ]
+                ],
+                "psr-4": {
+                    "Fgx\\": "src/"
+                }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -6311,10 +6318,11 @@
                 "livewire",
                 "ui"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/talalalmrka/fgx/issues",
+                "source": "https://github.com/talalalmrka/fgx/tree/1.0.9"
+            },
+            "time": "2025-04-01T22:10:52+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -8867,9 +8875,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "talalalmrka/fgx": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
