@@ -40,6 +40,9 @@ class Post extends Model implements HasMedia
     {
         return $this->created_at->format('d M, Y');
     }
+    public function getThumbnailFallbackUrlAttribute() {
+        return asset('assets/img/post-thumbnail.png');
+    }
     public function registerMediaCollections(): void
     {
         $this->registerThumbnail();
