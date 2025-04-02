@@ -4,12 +4,16 @@ namespace App\Traits;
 
 use Livewire\Attributes\Computed;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
-
+use Illuminate\Support\Str;
 trait WithEditModel
 {
-    use WithFileUploads, HasMediaProperties;
-    //protected $model_type;
-    public $status_key = 'save';
+    use WithFileUploads, HasMediaProperties, WithToast;
+    public $title = '';
+    public $status_key = 'status';
+    public function updated($property, $value)
+    {
+        $this->validateOnly($property);
+    }
     public function mountWithEditModel()
     {
         if (!$this->model()) {
@@ -23,7 +27,7 @@ trait WithEditModel
         }
         $this->fillData();
         $this->fillMeta();
-        //$this->fillMedia();
+        $this->fillTitle();
         if (method_exists($this, 'afterFill')) {
             $this->afterFill();
         }
@@ -58,6 +62,18 @@ trait WithEditModel
             $this->afterFillMeta();
         }
     }
+    public function fillTitle()
+    {
+        if (method_exists($this, 'beforeFillTitle')) {
+            $this->beforeFillTitle();
+        }
+        $this->title = $this->saved()
+            ? __("models.{$this->model_type}.edit", ['name' => data_get($this, 'name', '')])
+            : __("models.{$this->model_type}.create");
+        if (method_exists($this, 'afterFillTitle')) {
+            $this->afterFillTitle();
+        }
+    }
     #[Computed]
     public function getPreviews($property)
     {
@@ -68,10 +84,10 @@ trait WithEditModel
         if (method_exists($this, 'beforefillMedia')) {
             $this->beforefillMedia();
         }
-        foreach ($this->fillable_media as $property) {
+        /*foreach ($this->fillable_media as $property) {
             $previewsName = "previews" . ucfirst($property);
             $this->{$previewsName} = $this->getPreviews($property);
-        }
+        }*/
         if (method_exists($this, 'afterfillMedia')) {
             $this->afterfillMedia();
         }
@@ -127,6 +143,10 @@ trait WithEditModel
     {
         return !empty($this->model()?->id);
     }
+    public function getStatusKey()
+    {
+        return method_exists($this, 'statusKey') ? $this->statusKey() : $this->status_key;
+    }
     public function save()
     {
         if (method_exists($this, 'beforeSave')) {
@@ -137,12 +157,21 @@ trait WithEditModel
             $this->saveData();
             $this->saveMeta();
             $this->saveMedia();
-            if (method_exists($this, 'afterSave')) {
-                $this->afterSave();
-            }
-            session()->flash($this->status_key, __('Saved'));
+            session()->flash($this->getStatusKey(), __('Saved'));
+            $this->toastSuccess(__('Saved successfully'), 'top-center');
         } catch (\Exception $e) {
-            $this->addError($this->status_key, $e->getMessage());
+            $this->addError($this->getStatusKey(), $e->getMessage());
+            $this->toastError($e->getMessage());
         }
+        if (method_exists($this, 'afterSave')) {
+            $this->afterSave();
+        }
+    }
+    public function render()
+    {
+        $model_type_plural = Str::plural($this->model_type);
+        return view("livewire.dashboard.{$model_type_plural}.edit")->layout("layouts.dashboard", [
+            "title" => $this->title,
+        ]);
     }
 }

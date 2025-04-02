@@ -73,6 +73,16 @@
                     </div>
                 </div>
                 <div class="card mt-6">
+                    <fgx:card-header :title="__('Appearance')" />
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="col">
+                                <fgx:select id="template" wire:model.live="template" :label="__('Template')" :options="layout_options()"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-6">
                     <fgx:card-header :title="__('Publish')" />
                     <div class="card-body">
                         <div class="grid grid-cols-1 gap-4">
@@ -99,7 +109,7 @@
                                     <span wire:loading.remove wire:target="save">{{ __('Save') }}</span>
                                     <fgx:loader wire:loading wire:target="save" />
                                 </button>
-                                <fgx:status id="save" class="mt-3 sm alert-soft" />
+                                <fgx:status id="save" class="mt-2 xs alert-soft" />
                             </div>
                         </div>
                     </div>

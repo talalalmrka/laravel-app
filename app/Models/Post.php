@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Traits\HasThumbnail;
+use App\Traits\WithEditUrl;
 use Illuminate\Support\Str;
 
 class Post extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, HasThumbnail, HasMeta;
+    use HasFactory, InteractsWithMedia, HasThumbnail, HasMeta, WithEditUrl;
     protected $fillable = [
         'user_id',
         'name',
@@ -63,5 +64,20 @@ class Post extends Model implements HasMedia
             $slug = $originalSlug . $separator . $count++;
         }
         return $slug;
+    }
+
+    public function getLayout() {
+        $template = $this->getMeta('template', 'cover');
+        $layout = "layouts.$template";
+        return view()->exists($layout) ? $layout : "layouts.app";
+    }
+
+    public function scopePublish($query)
+    {
+        return $query->where('status', 'publish');
+    }
+    public function scopePost($query)
+    {
+        return $query->where('type', 'post');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard\Roles;
 
+use App\Traits\WithEditModel;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -10,69 +11,34 @@ use Spatie\Permission\Models\Role;
 
 class Edit extends Component
 {
-    public $title;
+    use WithEditModel;
+    protected $model_type = 'role';
     public ?Role $role;
-    #[Validate]
     public $name;
-    #[Validate]
     public $guard_name;
-    #[Validate]
     public $permissions;
+
+    protected $fillable_data = ['name', 'guard_name'];
     public function mount(?Role $role)
     {
-        $this->title = $role->id ? __('Edit role :name', ['name' => $this->name]) : __('Create role');
         $this->role = $role;
-        $this->fill($this->role->only(['name', 'guard_name']));
+    }
+    public function afterFill() {
         $this->permissions = $this->role->getPermissionNames()->toArray();
-    }
-    public function guard_name_options()
-    {
-        $options = [];
-        foreach (config('auth.guards') as $key => $value) {
-            $options[] = [
-                'label' => $key,
-                'value' => $key,
-            ];
-        }
-        return $options;
-    }
-    public function permission_options()
-    {
-        $permissions = Permission::where('guard_name', $this->guard_name)->get();
-        return $permissions->map(function (Permission $permission) {
-            return [
-                'label' => $permission->name,
-                'value' => $permission->name,
-            ];
-        })->toArray();
     }
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($this->role?->id)],
+            'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->where('guard_name', $this->guard_name)->ignore($this->role)],
             'guard_name' => ['required', 'string', Rule::in(array_keys(config('auth.guards')))],
             'permissions' => ['required', 'array'],
-            'permissions.*' => ['required', 'string', Rule::exists('roles', 'name')],
+            'permissions.*' => ['nullable', 'string', Rule::exists('permissions', 'name')->where('guard_name', $this->guard_name)],
         ];
     }
-    public function save()
-    {
-        $this->validate();
-        $this->role->fill($this->only(['name', 'guard_name']));
-        $save = $this->role->save();
-        if ($save) {
-            session()->flash('status', __('Role saved.'));
-        } else {
-            $this->addError('status', __('Save failed!'));
+    public function afterSave() {
+        $this->role->syncPermissions($this->permissions);
+        if ($this->role && url()->current() !== route('dashboard.roles.edit', $this->role)) {
+            $this->redirect(route('dashboard.roles.edit', $this->role), true);
         }
-    }
-    public function render()
-    {
-        return view('livewire.dashboard.roles.edit', [
-            'guard_name_options' => $this->guard_name_options(),
-            'permission_options' => $this->permission_options(),
-        ])->layout('layouts.dashboard', [
-                    'title' => $this->title,
-                ]);
     }
 }

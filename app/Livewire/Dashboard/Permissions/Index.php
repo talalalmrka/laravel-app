@@ -1,21 +1,38 @@
 <?php
 
 namespace App\Livewire\Dashboard\Permissions;
-use Livewire\Component;
+
+use App\Livewire\Components\Datatable\Datatable;
+use App\Livewire\Components\Datatable\Columns\Column;
 use Spatie\Permission\Models\Permission;
 
-class Index extends Component
+
+class Index extends Datatable
 {
-    public $title;
-    public $selected = [];
-    public $action;
-    public function mount()
+    public function builder()
     {
-        $this->title = __('Permissions');
+        return Permission::query();
     }
-    public function permissions()
+
+    public function getColumns()
     {
-        return Permission::paginate();
+        return [
+            Column::make('name')
+                ->label(__('Name'))
+                ->sortable()
+                ->searchable()
+                ->filterable(),
+            Column::make('guard_name')
+                ->label(__('Guard name'))
+                ->sortable()
+                ->searchable()
+                ->filterable()
+                ->class('text-center'),
+        ];
+    }
+    public function create()
+    {
+        $this->redirect(route('dashboard.permissions.create'), true);
     }
     public function edit(Permission $permission)
     {
@@ -23,23 +40,13 @@ class Index extends Component
     }
     public function delete(Permission $permission)
     {
-        $delete = $permission->delete();
-        if ($delete) {
-            session()->flash('status', __('Delete success.'));
-        } else {
-            $this->addError('status', __('Delete failed!'));
-        }
-    }
-    public function doAction()
-    {
-        dd('action', $this->action, 'selected', $this->selected);
+        $permission->delete();
+        $this->toastSuccess(__('Permission deleted'));
     }
     public function render()
     {
-        return view('livewire.dashboard.permissions.index', [
-            'permissions' => $this->permissions(),
-        ])->layout('layouts.dashboard', [
-                    'title' => $this->title,
-                ]);
+        return view('livewire.dashboard.permissions.index')->layout('layouts.dashboard', [
+            'title' => __('Permissions'),
+        ]);
     }
 }

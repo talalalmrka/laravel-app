@@ -15,49 +15,26 @@ class Edit extends Component
     protected $model_type = 'post';
     #[Locked]
     public ?Post $post;
-    public $title = '';
-
-    #[Validate]
+    public $user_id;
     public $name;
-
-    #[Validate]
     public $slug;
-
-    #[Validate]
     public $type = 'post';
-
-    #[Validate]
     public $status = 'trash';
+    public $content = '';
 
-    #[Validate]
-    public $content;
-
-    #[Validate]
     public $template;
-
-    #[Validate]
     public $seo_title;
-
-    #[Validate]
     public $seo_description;
 
-    #[Validate]
     public $thumbnail;
-    //public $previewsThumbnail;
-
-    #[Validate]
     public $files = [];
-    //public $previewsFiles;
 
-    protected $fillable_data = ['name', 'slug', 'type', 'status', 'content'];
+    protected $fillable_data = ['user_id','name', 'slug', 'type', 'status', 'content'];
     protected $fillable_meta = ['seo_title', 'seo_description', 'template'];
     protected $fillable_media = ['thumbnail', 'files'];
     public function mount(?Post $post)
     {
         $this->post = $post;
-        $this->title = $this->saved()
-            ? __("Edit post :name", ["name" => $this->post->name])
-            : __("Create post");
     }
     public function afterFill()
     {
@@ -66,8 +43,9 @@ class Edit extends Component
     public function rules()
     {
         return [
+            "user_id" => ["required","integer",Rule::exists('users', 'id')],
             "name" => ["required","string","max:255"],
-            "slug" => ["nullable", "string", "max:255",Rule::unique("posts", "slug")->ignore($this->post)],
+            "slug" => ["required", "string", "max:255",Rule::unique("posts", "slug")->ignore($this->post)],
             "type" => ["required","string", Rule::in(['post'])],
             "status" => ["required","string",Rule::in(['draft', 'publish', 'trash'])],
             "content" => ["nullable","string",],
@@ -83,13 +61,24 @@ class Edit extends Component
         if(empty($this->slug)){
             $this->slug = Post::generateSlug($this->name);
         }
+        if(empty($this->user_id)){
+            $this->user_id = auth()->user()->id;
+        }
         $this->type = 'post';
     }
     public function afterSave() {
-        if(!request()->routeIs('dashboard.posts.edit')){
-            $this->redirect(route('dashboard.posts.edit', $this->post), true);
+        $currentUrl = url()->current();
+        $this->toastInfo('its edit current :current, url :url', ['current' => $currentUrl,'url' => $this->post->edit_url]);
+        if ($this->post && url()->current() !== $this->post->edit_url) {
+            $this->toastError('Not edit :url', ['url' => $this->post->edit_url]);
+            //$this->redirect(route('dashboard.posts.edit', $this->post), true);
         }
+
     }
+    public function statusKey() {
+        return 'save';
+    }
+
     public function render()
     {
         return view("livewire.dashboard.posts.edit", [

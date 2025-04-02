@@ -12,7 +12,8 @@
 
 @layer base {
     body {
-        @apply relative font-poppins antialiased;
+        @apply relative font-poppins;
+        @apply antialiased;
         @apply text-gray-700 dark:text-gray-100;
         @apply bg-white dark:bg-gray-900;
     }

@@ -1,12 +1,14 @@
 <?php
+
 namespace App\Traits;
+
 trait WithToast
 {
     public function toast($message, $options = [])
     {
         $options = array_merge([
             'type' => 'info',
-            'position' => 'top-start',
+            'position' => 'top-end',
         ], $options);
 
         $this->dispatch('toast', [

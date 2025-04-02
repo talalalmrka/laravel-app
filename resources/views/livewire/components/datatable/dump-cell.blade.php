@@ -1,0 +1,2 @@
+@props(['data'])
+@dump($data)
