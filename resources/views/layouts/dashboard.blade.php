@@ -37,6 +37,8 @@
 
                     <x-nav-link wire:navigate :href="route('dashboard.posts')" wire:current="active" icon="bi-newspaper"
                         :label="__('Posts')" />
+                    <x-nav-link wire:navigate :href="route('dashboard.media')" wire:current="active" icon="bi-image"
+                        :label="__('Media')" />
 
                     <div x-cloak x-data="{ open: false }" class="block w-full">
                         <a href="#!" x-on:click="open = !open"

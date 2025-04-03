@@ -14,12 +14,6 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
-    server: {
-        watch: {
-            usePolling: true,
-            interval: 1000 // Default is ~100ms; increasing reduces CPU usage
-        }
-    }
     /*server:{
       cors: true,
       watch: {

@@ -1,16 +1,5 @@
 <div>
-    <x-slot name="actions">
-        <a wire:navigate href="{{ route('dashboard.posts') }}" class="btn xs btn-outline-primary">
-            @icon('bi-list-ul')
-            <span>{{ __('All') }}</span>
-        </a>
-        @if ($this->saved())
-            <a wire:navigate href="{{ route('dashboard.posts.create') }}" class="btn xs btn-outline-green">
-                @icon('bi-plus')
-                <span>{{ __('Create') }}</span>
-            </a>
-        @endif
-    </x-slot>
+    {!! $this->actions() !!}
     <form wire:submit="save">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="col md:col-span-3">
@@ -40,7 +29,8 @@
                 </div>
                 <div class="card mt-6">
                     <div class="card-body">
-                        <fgx:file id="files" wire:model.live="files" :label="__('Files')" :previews="$previewsFiles" multiple/>
+                        <fgx:file id="files" wire:model.live="files" :label="__('Files')"
+                            :previews="$previewsFiles" multiple />
                     </div>
                 </div>
             </div>
@@ -77,7 +67,8 @@
                     <div class="card-body">
                         <div class="grid grid-cols-1 gap-4">
                             <div class="col">
-                                <fgx:select id="template" wire:model.live="template" :label="__('Template')" :options="layout_options()"/>
+                                <fgx:select id="template" wire:model.live="template" :label="__('Template')"
+                                    :options="layout_options()" />
                             </div>
                         </div>
                     </div>

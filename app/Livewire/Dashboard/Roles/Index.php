@@ -10,6 +10,8 @@ use Spatie\Permission\Models\Permission;
 
 class Index extends Datatable
 {
+    //public Role $role;
+    //public $showModal = false;
     public function builder()
     {
         return Role::query();
@@ -18,46 +20,37 @@ class Index extends Datatable
     public function getColumns()
     {
         return [
-            Column::make('name')
+            column('name')
                 ->label(__('Name'))
                 ->sortable()
                 ->searchable()
                 ->filterable(),
-            Column::make('guard_name')
+            column('guard_name')
                 ->label(__('Guard name'))
                 ->sortable()
                 ->searchable()
                 ->filterable()
                 ->class('text-center'),
-            Column::make('permissions')
+            column('permissions')
                 ->label(__('Permissions'))
                 ->content(function (Role $role) {
-                    return view('livewire.components.datatable.badges-cell', [
-                        'items' => $role->getPermissionNames()->toArray(),
+                    return view('livewire.components.datatable.permissions', [
+                        'role' => $role,
                     ]);
                 }),
         ];
     }
+    public function edit($id)
+    {
+        $this->dispatch('edit-role', $id);
+    }
     public function create()
     {
-        $this->redirect(route('dashboard.roles.create'), true);
-    }
-    public function edit(Role $role)
-    {
-        $this->redirect(route('dashboard.roles.edit', $role), true);
-    }
-    public function delete(Role $role)
-    {
-        $role->delete();
-        $this->toastSuccess(__('Role deleted'));
-        //session()->flush('status', __('Role deleted'));
-        //$this->redirect(route('dashboard.roles'), true);
+        $this->dispatch('edit-role');
     }
     public function render()
     {
-        return view('livewire.dashboard.roles.index', [
-            //'posts' => Post::where('type', 'post')->paginate(),
-        ])->layout('layouts.dashboard', [
+        return view('livewire.dashboard.roles.index')->layout('layouts.dashboard', [
             'title' => __('Roles'),
         ]);
     }

@@ -40,7 +40,7 @@ class Admin extends Component
     }
     public function save()
     {
-        $this->authorize('manage users');
+        $this->authorize('manage_users');
         $this->validate();
         $save = $this->user->syncRoles($this->roles);
         if ($save) {
@@ -51,7 +51,7 @@ class Admin extends Component
     }
     public function render()
     {
-        return view('livewire.dashboard.profile.admin',[
+        return view('livewire.dashboard.profile.admin', [
             'options' => $this->role_options(),
         ]);
     }

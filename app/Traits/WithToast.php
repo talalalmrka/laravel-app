@@ -10,7 +10,6 @@ trait WithToast
             'type' => 'info',
             'position' => 'top-end',
         ], $options);
-
         $this->dispatch('toast', [
             'message' => $message,
             'options' => $options,

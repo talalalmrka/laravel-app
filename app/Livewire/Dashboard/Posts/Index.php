@@ -8,11 +8,11 @@ use App\Models\Post;
 
 class Index extends Datatable
 {
+    public $id_column = true;
     public function builder()
     {
         return Post::post();
     }
-
     public function getColumns()
     {
         return [
@@ -48,29 +48,10 @@ class Index extends Datatable
                 }),
         ];
     }
-    public function create()
-    {
-        $this->redirect(route('dashboard.posts.create'), true);
-    }
-    public function show(Post $post)
-    {
-        $this->redirect($post->permalink, true);
-    }
-    public function edit(Post $post)
-    {
-        $this->redirect(route('dashboard.posts.edit', $post), true);
-    }
-    public function delete(Post $post)
-    {
-        $post->delete();
-        session()->flush('status', __('Post deleted'));
-        $this->redirect(route('dashboard.posts'), true);
-    }
+
     public function render()
     {
-        return view('livewire.dashboard.posts.index', [
-            //'posts' => Post::where('type', 'post')->paginate(),
-        ])->layout('layouts.dashboard', [
+        return view('livewire.dashboard.posts.index')->layout('layouts.dashboard', [
             'title' => __('Posts'),
         ]);
     }

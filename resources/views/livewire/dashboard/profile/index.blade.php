@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        @can('manage users')
+        @can('manage_users')
             <div class="col">
                 <livewire:dashboard.profile.admin :user="$user" wire:key="admin" />
             </div>

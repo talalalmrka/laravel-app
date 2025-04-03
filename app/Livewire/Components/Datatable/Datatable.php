@@ -7,7 +7,8 @@ use App\Livewire\Components\Datatable\Buttons\Button;
 use App\Livewire\Components\Datatable\Columns\Column;
 use App\Livewire\Components\Datatable\Columns\DateColumn;
 use App\Traits\WithToast;
-use Illuminate\Support\Str;
+use Exception;
+use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -19,7 +20,7 @@ abstract class Datatable extends Component
 
     public $search = '';
     public $sortField = 'id';
-    public $sortDirection = 'desc';
+    public $sortDirection = 'asc';
     public $perPage = 10;
     #[Computed]
     public $tableClass = '';
@@ -39,6 +40,10 @@ abstract class Datatable extends Component
     public $created_at_column = true;
     public $id_column = false;
     public $date_format = null;
+    public function boot()
+    {
+        $this->restoreState();
+    }
     abstract public function builder();
 
     abstract public function getColumns();
@@ -46,10 +51,12 @@ abstract class Datatable extends Component
     public function updatedPerPage()
     {
         $this->resetPage();
+        $this->saveState();
     }
     public function updatedSearch()
     {
         $this->resetPage();
+        $this->saveState();
     }
     public function updatedSelectAll($value)
     {
@@ -60,6 +67,30 @@ abstract class Datatable extends Component
             $this->selected = [];
         }
     }
+    protected function saveState()
+    {
+        session()->put([
+            "datatable.{$this->getPluralName()}.sortField" => $this->sortField,
+            "datatable.{$this->getPluralName()}.sortDirection" => $this->sortDirection,
+            "datatable.{$this->getPluralName()}.perPage" => $this->perPage,
+        ]);
+    }
+    protected function restoreState()
+    {
+        $this->sortField = session()->get(
+            "datatable.{$this->getPluralName()}.sortField",
+            'id'
+        );
+        $this->sortDirection = session()->get(
+            "datatable.{$this->getPluralName()}.sortDirection",
+            'asc'
+        );
+        $this->perPage = session()->get(
+            "datatable.{$this->getPluralName()}.perPage",
+            10
+        );
+    }
+
     #[Computed]
     public function hasSelected()
     {
@@ -74,11 +105,11 @@ abstract class Datatable extends Component
         }
 
         $this->sortField = $field;
+        $this->saveState();
     }
     public function getActions()
     {
         return [
-            Action::make('show')->icon('bi-eye'),
             Action::make('edit')->icon('bi-pencil-square'),
             Action::make('delete')->icon('bi-trash'),
         ];
@@ -222,39 +253,86 @@ abstract class Datatable extends Component
     {
         $this->cellClass = $class;
     }
-    /*public function delete($id)
+    public function getModel()
     {
-        $item = $this->builder()->find($id);
-        if ($item) {
-            $delete = $item->delete();
-            if ($delete) {
-                $this->toastSuccess(__('Item deleted.'));
-            } else {
-                $this->toastError(__('Failed to delete item!'));
-            }
-        } else {
-            $this->toastError(__('Item not found!'));
-        }
-    }*/
-    public function deleteSelected()
+        return $this->builder()->getModel();
+    }
+    public function getPluralName()
     {
-        if (!empty($this->selected)) {
-            $count = sizeof($this->selected);
-            // Bulk delete the selected items
-            $this->builder()->whereIn('id', $this->selected)->delete();
-
-            // Clear the selection after deletion
-            $this->selected = [];
-            $this->selectAll = false;
-
-            // Optionally, show a success message
-            $this->toastSuccess(__(':count items deleted successfully.', ['count' => $count]));
-        } else {
-            // Optionally, show an error message
-            $this->toastError(__('No items selected for deletion!'));
+        return $this->getModel()->getTable();
+    }
+    public function getSingularName()
+    {
+        return str()->singular($this->getPluralName());
+    }
+    public function authorizeCreate()
+    {
+        $this->authorize("manage_{$this->getPluralName()}");
+    }
+    public function create()
+    {
+        $this->authorizeCreate();
+        $routeName = "dashboard.{$this->getPluralName()}.create";
+        if (Route::has($routeName)) {
+            $this->redirect(route($routeName), true);
         }
     }
-
+    public function authorizeEdit($id)
+    {
+        $this->authorize("manage_{$this->getPluralName()}", $id);
+    }
+    public function edit($id)
+    {
+        $this->authorizeEdit($id);
+        $routeName = "dashboard.{$this->getPluralName()}.edit";
+        if (Route::has($routeName)) {
+            $this->redirect(route($routeName, $id), true);
+        }
+    }
+    public function authorizeDelete($id)
+    {
+        $this->authorize("manage_{$this->getPluralName()}", $id);
+    }
+    public function delete($id)
+    {
+        try {
+            $this->authorizeDelete($id);
+            $delete = $this->getModel()->destroy($id);
+            if ($delete) {
+                $this->dispatch("{$this->getSingularName()}.deleted.$id");
+                $this->toastSuccess(__('Delete success.'));
+            } else {
+                $this->toastError(__('Delete failed!'));
+            }
+        } catch (\Exception $e) {
+            $this->toastError($e->getMessage());
+        }
+    }
+    public function deleteSelected()
+    {
+        $this->authorizeDelete($this->selected);
+        if (!empty($this->selected)) {
+            $count = sizeof($this->selected);
+            $ids = $this->pull('selected');
+            $delete = $this->getModel()->destroy($ids);
+            if ($delete) {
+                $this->dispatch("{$this->getPluralName()}.deleted", $ids);
+                $this->toastSuccess(__(':count items deleted successfully.', ['count' => $count]));
+                $this->selectAll = false;
+            } else {
+                $this->toastError(__('Delete failed!'));
+            }
+        } else {
+            $this->toastError(__('No items selected!'));
+        }
+    }
+    #[On('data-item-updated')]
+    public function onItemUpdated(string $model_name, int|null $itemId = null)
+    {
+        if ($model_name == $this->getSingularName()) {
+            $this->dispatch('itemUpdated');
+        }
+    }
     #[Computed]
     public function table()
     {
@@ -267,32 +345,5 @@ abstract class Datatable extends Component
             'selected' => $this->selected,
             'checkbox' => $this->checkbox,
         ]);
-    }
-
-    public function getSingularName()
-    {
-        return Str::singular($this->builder()->getModel()->getTable());
-    }
-    /*public function show($id)
-    {
-        //dd($id);
-        $this->dispatch("show-" . $this->getSingularName(), $id);
-    }*/
-    /*public function create()
-    {
-        $this->dispatch("edit-" . $this->getSingularName());
-    }*/
-    /*public function edit(mixed $id)
-    {
-        //$this->toastSuccess("edit-" . $this->getSingularName());
-        $this->dispatch("edit-" . $this->getSingularName(), $id);
-    }*/
-
-    #[On('data-item-updated')]
-    public function onItemUpdated(string $model_name, int|null $itemId = null)
-    {
-        if ($model_name == $this->getSingularName()) {
-            $this->dispatch('itemUpdated');
-        }
     }
 }

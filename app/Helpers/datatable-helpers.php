@@ -4,19 +4,6 @@ use App\Livewire\Components\Datatable\Buttons\Button;
 use App\Livewire\Components\Datatable\Columns\Column;
 use Illuminate\Support\Arr;
 
-if (!function_exists('badge')) {
-    function badge($data)
-    {
-        return view('livewire.components.datatable.badge', $data);
-    }
-}
-
-if (!function_exists('thumbnail')) {
-    function thumbnail($data)
-    {
-        return view('livewire.components.datatable.thumbnail', $data);
-    }
-}
 if (!function_exists('per_page_options')) {
     function per_page_options()
     {
@@ -53,5 +40,25 @@ if (!function_exists('column')) {
     function column($name)
     {
         return Column::make($name);
+    }
+}
+
+if (!function_exists('badge')) {
+    function badge($data)
+    {
+        return view('livewire.components.datatable.badge', $data);
+    }
+}
+
+if (!function_exists('thumbnail')) {
+    function thumbnail($data)
+    {
+        return view('livewire.components.datatable.thumbnail', $data);
+    }
+}
+if (!function_exists('badges')) {
+    function badges($data)
+    {
+        return view('livewire.components.datatable.badges', ['items' => $data]);
     }
 }

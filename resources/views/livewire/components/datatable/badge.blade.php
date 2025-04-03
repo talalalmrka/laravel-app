@@ -2,8 +2,8 @@
     'label' => null,
     'icon' => null,
     'color' => 'primary',
-    'outline' => false,
-    'size' => null,
+    'outline' => true,
+    'size' => 'sm',
 ])
 @php
     $colors = [

@@ -2,48 +2,57 @@
 
 namespace App\Livewire\Dashboard\Users;
 
+use App\Livewire\Components\Datatable\Columns\Column;
+use App\Livewire\Components\Datatable\Datatable;
 use App\Models\User;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
-use Livewire\WithPagination;
 
-class Index extends Component
+class Index extends Datatable
 {
-  use WithPagination;
-    public $title;
-    public $selected = [];
-    public $action;
-    public function mount()
+    public function builder()
     {
-        $this->title = __('Users');
+        return User::query();
     }
-    public function users()
+    public function getColumns()
     {
-        return User::paginate();
+        return [
+            column('id')
+                ->label(__('Id'))
+                ->sortable()
+                ->searchable()
+                ->filterable(),
+            column('name')
+                ->label(__('Name'))
+                ->sortable()
+                ->content(function (User $user) {
+                    return thumbnail([
+                        'title' => $user?->display_name,
+                        'image' => $user?->getFirstMediaUrl('avatar'),
+                    ]);
+                }),
+            column('email')
+                ->label(__('Email'))
+                ->sortable()
+                ->searchable()
+                ->filterable(),
+            column('role')
+                ->label(__('Role'))
+                ->sortable()
+                ->searchable()
+                ->filterable()
+                ->content(function (User $user) {
+                    return view('livewire.components.datatable.roles', ['user' => $user]);
+                }),
+        ];
     }
-    public function edit(User $user)
+    public function edit($id)
     {
-        $this->redirect(route('dashboard.profile', $user), true);
+        $this->redirect(route('dashboard.profile', $id), true);
     }
-    public function delete(User $user)
-    {
-        $delete = $user->delete();
-        if ($delete) {
-            session()->flash('status', __('Delete success.'));
-        } else {
-            $this->addError('status', __('Delete failed!'));
-        }
-    }
-    public function doAction()
-    {
-        dd('action', $this->action, 'selected', $this->selected);
-    }
+
     public function render()
     {
-        return view('livewire.dashboard.users.index', [
-            'users' => $this->users(),
-        ])->layout('layouts.dashboard', [
-                    'title' => $this->title,
-                ]);
+        return view('livewire.dashboard.users.index')->layout('layouts.dashboard', [
+            'title' => __('Users'),
+        ]);
     }
 }

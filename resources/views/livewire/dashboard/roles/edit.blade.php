@@ -1,16 +1,5 @@
 <div>
-    <x-slot name="actions">
-        <a wire:navigate href="{{ route('dashboard.roles') }}" class="btn xs btn-outline-primary">
-            @icon('bi-list-ul')
-            <span>{{ __('All') }}</span>
-        </a>
-        @if (!$this->saved())
-            <a wire:navigate href="{{ route('dashboard.roles.create') }}" class="">
-                @icon('bi-plus')
-                <span>{{ __('Create') }}</span>
-            </a>
-        @endif
-    </x-slot>
+    {!! $this->actions() !!}
     <form wire:submit="save">
         <fgx:card>
             <fgx:card-body>
@@ -30,9 +19,9 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="icon bi-floppy"></i>
                             <span wire:loading.remove wire:target="save">{{ __('Save') }}</span>
-                            <fgx:loader wire:loading wire:target="save"/>
+                            <fgx:loader wire:loading wire:target="save" />
                         </button>
-                        <fgx:status class="alert-soft xs mt-2"/>
+                        <fgx:status class="alert-soft xs mt-2" />
                     </div>
                 </div>
             </fgx:card-body>

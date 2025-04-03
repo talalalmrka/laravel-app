@@ -20,5 +20,6 @@
         ),
     ) }}>
     @icon($icon)
-    <span>{{ $label }}</span>
+    <span>{!! $label !!}</span>
+
 </a>

@@ -29,4 +29,21 @@ return [
         'delete' => 'Delete permission :name',
         'view' => 'View permission :name'
     ],
+    'roles' => [
+        'admin' => 'Admin',
+        'writer' => 'Writer',
+        'editor' => 'Editor',
+        'member' => 'Member',
+        'guest' => 'Guest',
+    ],
+    'permissions' => [
+        'manage_users' => 'Manage users',
+        'manage_roles' => 'Manage roles',
+        'manage_permissions' => 'Manage permissions',
+        'manage_posts' => 'Manage posts',
+        'manage_pages' => 'Manage pages',
+        'manage_menus' => 'Manage menus',
+        'manage_media' => 'Manage media',
+        'manage_settings' => 'Manage settings',
+    ],
 ];

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b562bb076f0085c9064effe9f42ced43",
+    "content-hash": "c9242122580175a692609359bfff74aa",
     "packages": [
         {
             "name": "brick/math",
@@ -6262,16 +6262,16 @@
         },
         {
             "name": "talalalmrka/fgx",
-            "version": "1.0.9",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/talalalmrka/fgx.git",
-                "reference": "2a18d183a7eec5b5f01815996b80aff7f20a0e65"
+                "reference": "b2db36a5ba4d67f728242e7a7fb3c7f974e22a60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/talalalmrka/fgx/zipball/2a18d183a7eec5b5f01815996b80aff7f20a0e65",
-                "reference": "2a18d183a7eec5b5f01815996b80aff7f20a0e65",
+                "url": "https://api.github.com/repos/talalalmrka/fgx/zipball/b2db36a5ba4d67f728242e7a7fb3c7f974e22a60",
+                "reference": "b2db36a5ba4d67f728242e7a7fb3c7f974e22a60",
                 "shasum": ""
             },
             "require": {
@@ -6320,9 +6320,9 @@
             ],
             "support": {
                 "issues": "https://github.com/talalalmrka/fgx/issues",
-                "source": "https://github.com/talalalmrka/fgx/tree/1.0.9"
+                "source": "https://github.com/talalalmrka/fgx/tree/1.1.0"
             },
-            "time": "2025-04-01T22:10:52+00:00"
+            "time": "2025-04-03T20:33:11+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

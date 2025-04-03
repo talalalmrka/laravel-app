@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import "fadgram-ui";
+@import "./icons.css";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../vendor/talalalmrka/fgx/resources/views/**/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -37,14 +38,6 @@
         hyphens: none;
         line-height: 1.5;
         background-color: #333;
-        /*background-color: #f5f5f5;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        overflow-x: auto;
-        font-family: monospace;
-        font-size: 0.75rem;
-        line-height: 1.5;
-        color: #333;*/
     }
 }
 
@@ -65,93 +58,4 @@
     .end-icon {
         @apply text-gray-600 dark:text-gray-300;
     }
-
-    /*.seek-drop-zone {
-        @apply border-2 border-dashed rounded-lg transition-colors;
-
-        &--single {
-            @apply w-32 h-32;
-        }
-
-        &--multiple {
-            @apply w-full min-h-36;
-        }
-
-        &--dragging {
-            @apply border-blue-500 bg-blue-50;
-        }
-
-        &__single-placeholder {
-            @apply absolute inset-0 flex flex-col items-center justify-center cursor-pointer;
-        }
-
-        &__placeholder-content {
-            @apply flex flex-col items-center text-center;
-        }
-
-        &__placeholder-text {
-            @apply text-sm text-gray-600;
-        }
-
-        &__placeholder-meta {
-            @apply text-xs text-gray-400 mt-1;
-        }
-    }
-
-    .previews-grid {
-        @apply grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 p-4;
-    }
-
-    .previews-item {
-        @apply relative w-32 h-32 border rounded-lg overflow-hidden;
-
-        &__image {
-            @apply w-full h-full object-cover;
-        }
-
-        &__fallback {
-            @apply w-full h-full flex items-center justify-center bg-gray-100 text-gray-400;
-        }
-
-        &__overlay {
-            @apply absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center space-x-2;
-        }
-
-        &__action {
-            @apply text-white hover:text-blue-300;
-        }
-
-        &__upload-controls {
-            @apply flex items-center space-x-1;
-        }
-
-        &__progress-track {
-            @apply w-16 bg-gray-200 rounded-full h-1;
-        }
-
-        &__progress-bar {
-            @apply bg-blue-500 h-1 rounded-full transition-all;
-        }
-
-        &--placeholder {
-            @apply border-2 border-dashed cursor-pointer flex items-center justify-center;
-        }
-
-        &--dragging {
-            @apply border-blue-500 bg-blue-50;
-        }
-
-        &__placeholder-content {
-            @apply flex flex-col items-center text-gray-400;
-        }
-
-        &__placeholder-text {
-            @apply text-sm text-center;
-        }
-
-        &__placeholder-meta {
-            @apply text-xs mt-1;
-        }
-    }*/
-
 }

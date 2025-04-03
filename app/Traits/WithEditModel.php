@@ -5,6 +5,7 @@ namespace App\Traits;
 use Livewire\Attributes\Computed;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Illuminate\Support\Str;
+
 trait WithEditModel
 {
     use WithFileUploads, HasMediaProperties, WithToast;
@@ -84,10 +85,6 @@ trait WithEditModel
         if (method_exists($this, 'beforefillMedia')) {
             $this->beforefillMedia();
         }
-        /*foreach ($this->fillable_media as $property) {
-            $previewsName = "previews" . ucfirst($property);
-            $this->{$previewsName} = $this->getPreviews($property);
-        }*/
         if (method_exists($this, 'afterfillMedia')) {
             $this->afterfillMedia();
         }
@@ -159,6 +156,7 @@ trait WithEditModel
             $this->saveMedia();
             session()->flash($this->getStatusKey(), __('Saved'));
             $this->toastSuccess(__('Saved successfully'), 'top-center');
+            $this->dispatch('data-item-updated', $this->model_type, $this->model()->id);
         } catch (\Exception $e) {
             $this->addError($this->getStatusKey(), $e->getMessage());
             $this->toastError($e->getMessage());
@@ -166,6 +164,11 @@ trait WithEditModel
         if (method_exists($this, 'afterSave')) {
             $this->afterSave();
         }
+    }
+    #[Computed]
+    public function actions()
+    {
+        return view('livewire.components.edit-model.actions', ['model' => $this->model()]);
     }
     public function render()
     {
