@@ -2,6 +2,8 @@
 
 Welcome to the **Fadgram Laravel Starter Kit**! This starter kit is designed to help you kickstart your Laravel projects with a pre-configured setup and essential features.
 
+![Image](https://github.com/user-attachments/assets/a0b77640-7b0f-4218-88f7-8995cb089285)
+
 ## Tech Stack
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
