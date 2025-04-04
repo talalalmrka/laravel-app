@@ -48,8 +48,11 @@ class Index extends Datatable
                 ->sortable()
                 ->searchable()
                 ->filterable(),
-
         ];
+    }
+    public function create()
+    {
+        $this->dispatch('create-media');
     }
     public function render()
     {

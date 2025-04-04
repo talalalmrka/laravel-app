@@ -31,11 +31,11 @@ class Index extends Datatable
     }
     public function edit($id)
     {
-        $this->dispatch('edit-permission', $id);
+        $this->dispatch('edit', 'permission', $id);
     }
     public function create()
     {
-        $this->dispatch('edit-permission');
+        $this->dispatch('edit', 'permission');
     }
     public function render()
     {

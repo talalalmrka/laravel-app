@@ -42,11 +42,13 @@ class Index extends Datatable
     }
     public function edit($id)
     {
-        $this->dispatch('edit-role', $id);
+        $this->toastSuccess(__('edit role :id', ['id' => $id]));
+        $this->dispatch('edit', 'role', $id);
+        //$this->dispatch('edit-role', $id);
     }
     public function create()
     {
-        $this->dispatch('edit-role');
+        $this->dispatch('edit', 'role');
     }
     public function render()
     {

@@ -1,30 +1,16 @@
-<div>
-    {!! $this->actions() !!}
-    <form wire:submit="save">
-        <fgx:card>
-            <fgx:card-body>
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="col">
-                        <fgx:input type="text" id="name" wire:model.live="name" :label="__('Name')" />
-                    </div>
-                    <div class="col">
-                        <fgx:radio id="guard_name" wire:model.live="guard_name" :label="__('Guard name')"
-                            :options="guard_name_options()" />
-                    </div>
-                    <div class="col">
-                        <fgx:switch-group id="permissions" wire:model.live="permissions" :label="__('Permissions')"
-                            :options="permission_options($guard_name)" />
-                    </div>
-                    <div class="col">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="icon bi-floppy"></i>
-                            <span wire:loading.remove wire:target="save">{{ __('Save') }}</span>
-                            <fgx:loader wire:loading wire:target="save" />
-                        </button>
-                        <fgx:status class="alert-soft xs mt-2" />
-                    </div>
-                </div>
-            </fgx:card-body>
-        </fgx:card>
-    </form>
-</div>
+<x-edit-dialog :model="$role" :title="$title">
+    <div class="grid grid-cols-1 gap-4">
+        <div class="col">
+            Show: {{ $show }}
+            <fgx:input id="name" wire:model.live="name" :label="__('Name')" />
+        </div>
+        <div class="col">
+            <fgx:radio id="guard_name" wire:model.live="guard_name" :label="__('Guard name')"
+                :options="guard_name_options()" />
+        </div>
+        <div class="col">
+            <fgx:switch-group id="permissions" wire:model.live="permissions" :label="__('Permissions')"
+                :options="permission_options($guard_name)" />
+        </div>
+    </div>
+</x-edit-dialog>

@@ -11,6 +11,7 @@ trait WithEditModel
     use WithFileUploads, HasMediaProperties, WithToast;
     public $title = '';
     public $status_key = 'status';
+
     public function updated($property, $value)
     {
         $this->validateOnly($property);
@@ -40,6 +41,32 @@ trait WithEditModel
     {
         return isset($this->model_type) ? $this->{$this->model_type} : null;
     }
+    public function table()
+    {
+        return $this->model()->getTable();
+    }
+    public function singularName()
+    {
+        return str()->singular($this->table());
+    }
+    public function pluralName()
+    {
+        return str()->plural($this->model_type);
+    }
+    public function editTitle()
+    {
+        return __("Edit {$this->singularName()} :name", ['name' => data_get($this, 'name', '')]);
+    }
+    public function createTitle()
+    {
+        return __("Create {$this->singularName()}");
+    }
+    public function title()
+    {
+        return $this->saved()
+            ? $this->editTitle()
+            : $this->createTitle();
+    }
     public function fillData()
     {
         if (method_exists($this, 'beforeFillData')) {
@@ -68,9 +95,10 @@ trait WithEditModel
         if (method_exists($this, 'beforeFillTitle')) {
             $this->beforeFillTitle();
         }
-        $this->title = $this->saved()
+        /*$this->title = $this->saved()
             ? __("models.{$this->model_type}.edit", ['name' => data_get($this, 'name', '')])
-            : __("models.{$this->model_type}.create");
+            : __("models.{$this->model_type}.create");*/
+        $this->title = $this->title();
         if (method_exists($this, 'afterFillTitle')) {
             $this->afterFillTitle();
         }
@@ -149,6 +177,7 @@ trait WithEditModel
         if (method_exists($this, 'beforeSave')) {
             $this->beforeSave();
         }
+        $this->authorize("manage_{$this->table()}");
         $this->validate();
         try {
             $this->saveData();
@@ -156,7 +185,7 @@ trait WithEditModel
             $this->saveMedia();
             session()->flash($this->getStatusKey(), __('Saved'));
             $this->toastSuccess(__('Saved successfully'), 'top-center');
-            $this->dispatch('data-item-updated', $this->model_type, $this->model()->id);
+            $this->dispatch('saved', $this->model_type, $this->model()->id);
         } catch (\Exception $e) {
             $this->addError($this->getStatusKey(), $e->getMessage());
             $this->toastError($e->getMessage());
@@ -172,8 +201,8 @@ trait WithEditModel
     }
     public function render()
     {
-        $model_type_plural = Str::plural($this->model_type);
-        return view("livewire.dashboard.{$model_type_plural}.edit")->layout("layouts.dashboard", [
+        $plural_name = $this->pluralName();
+        return view("livewire.dashboard.{$plural_name}.edit")->layout("layouts.dashboard", [
             "title" => $this->title,
         ]);
     }

@@ -28,8 +28,8 @@ Welcome to the **Fadgram Laravel Starter Kit**! This starter kit is designed to 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/talalalmrka/fadgram-starter-kit.git
-    cd fadgram-starter-kit
+    git clone https://github.com/talalalmrka/laravel-fadgram.git
+    cd laravel-fadgram
     ```
 
 2. Install dependencies:

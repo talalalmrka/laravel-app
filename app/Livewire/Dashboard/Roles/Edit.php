@@ -2,27 +2,26 @@
 
 namespace App\Livewire\Dashboard\Roles;
 
-use App\Traits\WithEditModel;
+use App\Traits\WithEditModelDialog;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
 class Edit extends Component
 {
-    use WithEditModel;
+    use WithEditModelDialog;
     protected $model_type = 'role';
+    #[Locked]
     public Role $role;
-    public $closeAfterSave = true;
-    public $show = false;
-    public $title = '';
     public $name = '';
     public $guard_name = 'web';
     public $permissions = [];
-
     protected $fillable_data = ['name', 'guard_name'];
     public function mount(Role $role)
     {
+        $this->authorize('manage_roles');
         $this->role = $role;
     }
     public function afterFill()
@@ -41,26 +40,5 @@ class Edit extends Component
     public function afterSave()
     {
         $this->role->syncPermissions($this->permissions);
-        if ($this->closeAfterSave) {
-            $this->show = false;
-        }
-    }
-    public function updatedShow($value)
-    {
-        if (!$value) {
-            $this->reset();
-        }
-    }
-    #[On('edit-role')]
-    public function onEdit($id = null)
-    {
-        $item = $id ? Role::find($id) : new Role;
-        $this->mount($item);
-        $this->mountWithEditModel();
-        $this->show = true;
-    }
-    public function render()
-    {
-        return view('livewire.dashboard.roles.edit-modal');
     }
 }

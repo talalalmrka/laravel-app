@@ -326,8 +326,8 @@ abstract class Datatable extends Component
             $this->toastError(__('No items selected!'));
         }
     }
-    #[On('data-item-updated')]
-    public function onItemUpdated(string $model_name, int|null $itemId = null)
+    #[On('saved')]
+    public function onSaved(string $model_name, int|null $itemId = null)
     {
         if ($model_name == $this->getSingularName()) {
             $this->dispatch('itemUpdated');

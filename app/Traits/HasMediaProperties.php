@@ -4,11 +4,12 @@ namespace App\Traits;
 
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 trait HasMediaProperties
 {
-    use WithToast;
+    use WithFileUploads, WithToast;
     #[On('delete-media')]
     public function onDeleteMedia($id)
     {
